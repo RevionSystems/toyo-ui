@@ -41,7 +41,7 @@ the same manuals/parts/suppliers back with links.
 | 2 | Automotive portal: home hero, domain cards, featured manual | 70 min | Done |
 | 3 | Engineering workflows: manuals, parts, suppliers, detail pages, search | 90 min | Done |
 | 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Done |
-| 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Pending |
+| 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Done |
 | 6 | Tests and documentation | 45 min | Pending |
 | 7 | Stabilization: bug fixing, responsive pass, polish | 70 min | Pending |
 
@@ -80,6 +80,13 @@ Authentication, real backend/PLM integration, editing/workflow approval, real 3D
   radius and elevation from `tokens.ts`. Tests: token contrast (AA in both schemes), snippet
   generator, and every Lab entry rendered + axe-checked (61 tests passing). axe caught `<a>`
   elements directly inside `<ul>` in RelatedList, SideNav and the Lab nav; fixed with `ListItem`.
+- **Slice 5** — Full assistant page (`/assistant?q=` deep links auto-run; global search Enter routes
+  here). `AssistantProvider` interface: default offline deterministic engine; optional
+  `httpProvider` enabled by `VITE_ASSISTANT_ENDPOINT` posts to a backend proxy, grounds the reply
+  (drops unknown manual/part/supplier IDs and uncited facts) and falls back to the offline engine on
+  network, HTTP or contract errors. Panel supports cancellation, error state and follow-ups.
+  Tests: grounding, fallback (3 failure modes), config selection, panel interaction + axe (72 passing).
+  **No live LLM is used by default**; no backend proxy is included in this repo.
 
 ## Known issues
 

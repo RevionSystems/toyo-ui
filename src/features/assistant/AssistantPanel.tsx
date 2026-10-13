@@ -2,6 +2,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
@@ -12,16 +13,19 @@ import Typography from '@mui/material/Typography';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { RelatedList, StatusChip } from '@/components';
 import { getSystem } from '@/data/repository';
-import { answer, SUGGESTED_PROMPTS, type AssistantAnswer } from './engine';
+import { SUGGESTED_PROMPTS, type AssistantAnswer } from './engine';
+import { configuredProvider, type AssistantProvider } from './provider';
 
 export interface AssistantPanelProps {
   /** `compact` shows only the latest answer; `full` keeps the conversation. */
   variant?: 'compact' | 'full';
   initialQuery?: string;
-  /** Runs `initialQuery` on mount. */
+  /** Runs `initialQuery` on mount and whenever it changes. */
   autoRun?: boolean;
-  /** Simulated retrieval latency so the loading state is visible. Tests pass 0. */
+  /** Minimum time the loading state is shown, so fast local answers don't flash. Tests pass 0. */
   latencyMs?: number;
+  /** Answer source; defaults to the build-time configured provider. */
+  provider?: AssistantProvider;
 }
 
 interface Turn {
@@ -29,37 +33,57 @@ interface Turn {
   answer: AssistantAnswer;
 }
 
-export function AssistantPanel({ variant = 'full', initialQuery = '', autoRun = false, latencyMs = 450 }: AssistantPanelProps) {
+const defaultProvider = configuredProvider();
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export function AssistantPanel({
+  variant = 'full',
+  initialQuery = '',
+  autoRun = false,
+  latencyMs = 450,
+  provider = defaultProvider,
+}: AssistantPanelProps) {
   const [input, setInput] = useState(initialQuery);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [pending, setPending] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [error, setError] = useState<string>();
+  const inflight = useRef<AbortController>(undefined);
   const nextId = useRef(0);
 
-  const ask = (q: string) => {
+  const ask = async (q: string) => {
     const query = q.trim();
-    if (!query || pending) return;
+    if (!query) return;
+    // A new question supersedes one still in flight.
+    inflight.current?.abort();
+    const controller = new AbortController();
+    inflight.current = controller;
     setPending(true);
-    clearTimeout(timer.current);
-    const run = () => {
-      const result = answer(query);
-      setTurns((t) => (variant === 'compact' ? [{ id: nextId.current++, answer: result }] : [...t, { id: nextId.current++, answer: result }]));
-      setPending(false);
+    setError(undefined);
+    try {
+      const [result] = await Promise.all([provider.ask(query, controller.signal), latencyMs > 0 ? wait(latencyMs) : null]);
+      if (controller.signal.aborted) return;
+      const turn = { id: nextId.current++, answer: result };
+      setTurns((t) => (variant === 'compact' ? [turn] : [...t, turn]));
       if (variant === 'full') setInput('');
-    };
-    if (latencyMs > 0) timer.current = setTimeout(run, latencyMs);
-    else run();
+    } catch {
+      if (!controller.signal.aborted) setError('The assistant could not answer. Try again or search the manuals directly.');
+    } finally {
+      if (!controller.signal.aborted) setPending(false);
+    }
   };
 
   useEffect(() => {
-    if (autoRun && initialQuery) ask(initialQuery);
-    return () => clearTimeout(timer.current);
-    // Only on mount / when the deep-linked query changes.
+    if (autoRun && initialQuery) {
+      setInput(initialQuery);
+      void ask(initialQuery);
+    }
+    return () => inflight.current?.abort();
+    // Re-run only when the deep-linked query changes.
   }, [initialQuery]);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    ask(input);
+    if (!pending) void ask(input);
   };
 
   const compact = variant === 'compact';
@@ -73,7 +97,7 @@ export function AssistantPanel({ variant = 'full', initialQuery = '', autoRun = 
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              ask(input);
+              if (!pending) void ask(input);
             }
           }}
           multiline
@@ -107,7 +131,7 @@ export function AssistantPanel({ variant = 'full', initialQuery = '', autoRun = 
                 variant="outlined"
                 onClick={() => {
                   setInput(p);
-                  ask(p);
+                  void ask(p);
                 }}
                 sx={{ height: 'auto', py: 1, maxWidth: '100%', '& .MuiChip-label': { whiteSpace: 'normal', fontWeight: 500 } }}
               />
@@ -118,8 +142,9 @@ export function AssistantPanel({ variant = 'full', initialQuery = '', autoRun = 
 
       <Box aria-live="polite" aria-busy={pending} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {turns.map((t) => (
-          <AnswerView key={t.id} answer={t.answer} compact={compact} onFollowUp={ask} showQuestion={!compact} />
+          <AnswerView key={t.id} answer={t.answer} compact={compact} onFollowUp={(q) => void ask(q)} showQuestion={!compact} />
         ))}
+        {error && <Alert severity="error">{error}</Alert>}
         {pending && (
           <Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
