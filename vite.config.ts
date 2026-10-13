@@ -6,7 +6,10 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
+    },
   },
   build: {
     rolldownOptions: {
@@ -14,8 +17,16 @@ export default defineConfig({
         // Long-lived vendor chunks: app deploys don't invalidate cached framework code.
         codeSplitting: {
           groups: [
-            { name: 'react', test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/, priority: 20 },
-            { name: 'mui', test: /node_modules[\\/](@mui|@emotion|@popperjs|react-transition-group)[\\/]/, priority: 10 },
+            {
+              name: 'react',
+              test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/,
+              priority: 20,
+            },
+            {
+              name: 'mui',
+              test: /node_modules[\\/](@mui|@emotion|@popperjs|react-transition-group)[\\/]/,
+              priority: 10,
+            },
           ],
         },
       },
@@ -26,6 +37,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'shared/**/*.test.ts'],
   },
 });

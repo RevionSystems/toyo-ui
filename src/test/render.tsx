@@ -4,15 +4,33 @@ import { createMemoryRouter, RouterProvider, type RouteObject } from 'react-rout
 import { AppProviders } from '@/app/AppProviders';
 
 /** Renders UI inside the app theme and a memory router (MUI links need router context). */
-export function renderWithProviders(ui: ReactElement, { route = '/', ...options }: { route?: string } & RenderOptions = {}) {
+export function renderWithProviders(
+  ui: ReactElement,
+  { route = '/', ...options }: { route?: string } & RenderOptions = {},
+) {
   const router = createMemoryRouter([{ path: '*', element: ui }], { initialEntries: [route] });
-  return { router, ...render(<AppProviders><RouterProvider router={router} /></AppProviders>, options) };
+  return {
+    router,
+    ...render(
+      <AppProviders>
+        <RouterProvider router={router} />
+      </AppProviders>,
+      options,
+    ),
+  };
 }
 
 /** Renders a real route tree, e.g. the app's `routes`, at a given URL. */
 export function renderRoutes(routes: RouteObject[], route = '/') {
   const router = createMemoryRouter(routes, { initialEntries: [route] });
-  return { router, ...render(<AppProviders><RouterProvider router={router} /></AppProviders>) };
+  return {
+    router,
+    ...render(
+      <AppProviders>
+        <RouterProvider router={router} />
+      </AppProviders>,
+    ),
+  };
 }
 
 export const Wrapper = ({ children }: { children: ReactNode }) => <AppProviders>{children}</AppProviders>;

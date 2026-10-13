@@ -1,24 +1,21 @@
+import LinearProgress from '@mui/material/LinearProgress';
 import { lazy, Suspense, type ReactNode } from 'react';
 import type { RouteObject } from 'react-router-dom';
-import LinearProgress from '@mui/material/LinearProgress';
-import { AppShell } from '@/layout/AppShell';
-import { HomePage } from '@/pages/HomePage';
-import { NotFoundPage } from '@/pages/NotFoundPage';
-import { ManualsPage } from '@/pages/ManualsPage';
-import { ManualDetailPage } from '@/pages/ManualDetailPage';
-import { PartsPage } from '@/pages/PartsPage';
-import { PartDetailPage } from '@/pages/PartDetailPage';
-import { SuppliersPage } from '@/pages/SuppliersPage';
-import { SupplierDetailPage } from '@/pages/SupplierDetailPage';
-import { SystemsPage } from '@/pages/SystemsPage';
-import { SystemDetailPage } from '@/pages/SystemDetailPage';
-import { ManufacturingPage } from '@/pages/ManufacturingPage';
-import { AssistantPage } from '@/pages/AssistantPage';
+import { AppShell } from '@/components/layout/AppShell';
+import ComponentLabPage from '@/features/component-lab/ComponentLabPage';
+import OverviewPage from '@/features/component-library/OverviewPage';
+import { NotFoundPage } from './NotFoundPage';
 
-// Platform pages are code-split: most portal users never open them.
-const ComponentLabPage = lazy(() => import('@/pages/ComponentLabPage'));
-const DesignTokensPage = lazy(() => import('@/pages/DesignTokensPage'));
-const AccessibilityPage = lazy(() => import('@/pages/AccessibilityPage'));
+// The Component Lab is the primary surface and loads eagerly; secondary pages are code-split.
+const TokensPage = lazy(() => import('@/features/foundations/TokensPage'));
+const TypographyPage = lazy(() => import('@/features/foundations/TypographyPage'));
+const SpacingPage = lazy(() => import('@/features/foundations/SpacingPage'));
+const ThemePage = lazy(() => import('@/features/foundations/ThemePage'));
+const AccessibilityPage = lazy(() => import('@/features/foundations/AccessibilityPage'));
+const ApiExplorerPage = lazy(() => import('@/features/documentation/ApiExplorerPage'));
+const TestExplorerPage = lazy(() => import('@/features/documentation/TestExplorerPage'));
+const DocumentationPage = lazy(() => import('@/features/documentation/DocumentationPage'));
+const AssistantPage = lazy(() => import('@/features/ai-assistant/AssistantPage'));
 
 const suspend = (node: ReactNode) => (
   <Suspense fallback={<LinearProgress aria-label="Loading page" />}>{node}</Suspense>
@@ -28,21 +25,17 @@ export const routes: RouteObject[] = [
   {
     element: <AppShell />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: 'systems', element: <SystemsPage /> },
-      { path: 'systems/:systemId', element: <SystemDetailPage /> },
-      { path: 'manuals', element: <ManualsPage /> },
-      { path: 'manuals/:manualId', element: <ManualDetailPage /> },
-      { path: 'parts', element: <PartsPage /> },
-      { path: 'parts/:partId', element: <PartDetailPage /> },
-      { path: 'suppliers', element: <SuppliersPage /> },
-      { path: 'suppliers/:supplierId', element: <SupplierDetailPage /> },
-      { path: 'manufacturing', element: <ManufacturingPage /> },
-      { path: 'assistant', element: <AssistantPage /> },
-      { path: 'lab', element: suspend(<ComponentLabPage />) },
-      { path: 'lab/:componentId', element: suspend(<ComponentLabPage />) },
-      { path: 'tokens', element: suspend(<DesignTokensPage />) },
-      { path: 'accessibility', element: suspend(<AccessibilityPage />) },
+      { index: true, element: <OverviewPage /> },
+      { path: 'components/:componentId', element: <ComponentLabPage /> },
+      { path: 'foundations/tokens', element: suspend(<TokensPage />) },
+      { path: 'foundations/typography', element: suspend(<TypographyPage />) },
+      { path: 'foundations/spacing', element: suspend(<SpacingPage />) },
+      { path: 'foundations/theme', element: suspend(<ThemePage />) },
+      { path: 'foundations/accessibility', element: suspend(<AccessibilityPage />) },
+      { path: 'engineering/api', element: suspend(<ApiExplorerPage />) },
+      { path: 'engineering/tests', element: suspend(<TestExplorerPage />) },
+      { path: 'engineering/docs', element: suspend(<DocumentationPage />) },
+      { path: 'engineering/assistant', element: suspend(<AssistantPage />) },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

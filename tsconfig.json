@@ -16,7 +16,7 @@
     "resolveJsonModule": true,
     "types": ["vite/client", "vitest/globals"],
     "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
+    "paths": { "@/*": ["src/*"], "@shared/*": ["shared/*"] }
   },
-  "include": ["src", "e2e", "vite.config.ts", "playwright.config.ts"]
+  "include": ["src", "shared", "e2e", "vite.config.ts", "playwright.config.ts"]
 }

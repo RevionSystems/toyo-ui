@@ -1,129 +1,84 @@
 # Toyo-ui — Implementation Status
 
-Automotive engineering knowledge platform + reusable React/MUI component library.
-Portfolio project. Time budget: 8 hours, delivered in verifiable slices.
+**AI-Powered Component Engineering Lab.** React + TypeScript + MUI component library with an interactive
+lab, design-token reference, documentation, automated tests and a server-side AI assistant for component work.
+Time budget: ~8 hours, delivered in slices. Each slice leaves the app runnable.
 
 ## Repository assessment (Slice 0)
 
-- `toyo-ui/` was an empty git repo (no commits, `.gitignore` only).
-- Sibling projects in this workspace use **npm + Vite + React + TypeScript + Vitest**; Toyo-ui follows the same conventions.
-- Node 22, npm 10.
+The repo previously held an automotive engineering *portal* (manuals, parts, suppliers), committed through
+`e34532a`. The new brief excludes that domain, so it is **reworked in place**: git history keeps the portal;
+reusable infrastructure is kept and extended.
 
-## Stack decisions
+| Keep and extend | Remove |
+|---|---|
+| Vite 8 + React 19 + MUI 9 + strict TS, router, providers | Portal pages: manuals, parts, suppliers, systems, manufacturing, home |
+| Token → CSS-variables theme pipeline, light/dark | Synthetic engineering dataset + repository |
+| App shell (skip link, focus management, responsive drawer) | Portal search index, portal assistant engine |
+| Lab registry pattern (`LabEntry<P>`, `jsx()` snippet generator) | Exploded view, manual tabs, domain components (`DomainCard`, `RelatedList`) |
+| Contrast utilities + token tests, axe helpers | |
+| ESLint, Vitest + Testing Library, Playwright + axe, console-error fixture | |
 
-| Concern | Choice | Why |
-|---|---|---|
-| Build | Vite 8 | Matches sibling projects, fast HMR |
-| UI | React 19 + MUI 9 + Emotion | Required by brief; theme-driven component library |
-| Language | TypeScript 5.9 (strict) | TS 7 native compiler is too new for tooling confidence |
-| Routing | React Router 7 (`createBrowserRouter`) | Standard, supports nested layout routes |
-| Tests | Vitest + Testing Library + jsdom + vitest-axe | Unit, interaction and automated a11y checks |
-| Data | Typed in-memory relational dataset | No backend needed; relationships via IDs |
-| AI assistant | Deterministic local retrieval over the dataset | Runs offline, testable, no API keys; clearly labeled as demo |
+### Deviations from the brief (deliberate)
 
-### Branding
+- **Vitest instead of Jest.** The brief allows a compatible alternative and asks to reuse existing tooling. Vitest
+  uses Jest's API; Testing Library, `user-event` and axe checks are unchanged.
+- **Red for text vs. fills.** `#EB0A1E` passes AA on white (4.57:1) but not on `#F4F5F6` (4.19:1). It is used for
+  fills and accents; red *text* uses a darker shade. Enforced by `tokens.test.ts`.
+- **"Navigation" library category omitted** until it has a component; the brief asks to avoid empty pages.
 
-The product is branded **Toyo-ui** with an original wordmark. No real manufacturer logo,
-name or trademark is used in the UI chrome. Imagery comes from the supplied reference collage.
+## Stack
 
-## Smallest useful end-to-end workflow
+| Concern | Choice |
+|---|---|
+| App | React 19, TypeScript 5.9 strict, Vite 8, MUI 9 + Emotion, React Router 7 |
+| AI server | Node + Express + TypeScript (tsx), Zod contracts shared with the client, Anthropic Claude API |
+| Tests | Vitest + Testing Library + user-event + axe-core; Playwright + @axe-core/playwright; supertest for the API |
+| Quality | ESLint 9 (typescript-eslint, hooks, jsx-a11y), Prettier, GitHub Actions CI |
 
-Search "brake" → open manual **BR-0012 Front Brake Assembly** → see related parts →
-open part **PT-3310-12A** → see its supplier → ask the AI assistant the same question and get
-the same manuals/parts/suppliers back with links.
+## Smallest complete workflow
+
+Open **Buttons** → change `variant`, `size`, `loading`, `startIcon` → preview and TypeScript example update from
+the same state → copy code → read API table and accessibility notes → run axe on the preview → ask the AI
+assistant to compose a confirmation dialog → receive a structured, validated suggestion with code and copy it.
 
 ## Slices
 
 | # | Slice | Budget | Status |
 |---|---|---:|---|
 | 0 | Inspect and plan | 20 min | Done |
-| 1 | Foundation: Vite app, MUI theme + tokens, routing, app shell | 45 min | Done |
-| 2 | Automotive portal: home hero, domain cards, featured manual | 70 min | Done |
-| 3 | Engineering workflows: manuals, parts, suppliers, detail pages, search | 90 min | Done |
-| 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Done |
-| 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Done |
-| 6 | Tests, lint, browser tests, accessibility | 45 min | Done |
-| 7 | Documentation, stabilization, final verification | 70 min | Done |
+| 1 | Foundation: remove portal, restructure, new tokens/palette, shell + nav, Prettier | 45 min | Done |
+| 2 | Component Lab workspace: preview (viewport sizes), properties, code/API/a11y/tests tabs | 75 min | Pending |
+| 3 | Component library: Button, TextField, Alert, StatusBadge, Dialog, DataTable, EmptyState, LoadingState | 100 min | Pending |
+| 4 | Foundations, documentation, tests: token explorer, theme, API/Test explorers, component tests | 75 min | Pending |
+| 5 | AI integration: Express + Zod + Claude, demo mode, compose/tests/review workflows | 75 min | Pending |
+| 6 | Quality: browser tests, CI, docs + ADR, final verification | 90 min | Pending |
 
 ## Acceptance criteria
 
-- `npm run dev`, `npm run build`, `npm run typecheck`, `npm test` all succeed.
-- Light/dark mode toggle driven by the central theme.
-- Global search finds manuals, parts and suppliers.
-- Manual ↔ part ↔ supplier relationships navigable in both directions.
-- Component Lab: every shared component has a live preview with editable props and a code snippet.
-- AI assistant answers the brake-system workflow with linked results and a provenance disclaimer.
-- Automated axe checks pass for shared components and key pages.
-
-## Out of scope
-
-Authentication, real backend/PLM integration, editing/workflow approval, real 3D viewer, i18n beyond an EN label.
+- `dev`, `build`, `typecheck`, `lint`, `test` scripts succeed.
+- Selecting a component changes the preview; changing a prop updates preview **and** code from one state object.
+- Each component documents purpose, props/types/defaults, usage, variants/states, accessibility notes and testing expectations.
+- Theme scheme switch changes real MUI rendering.
+- AI: prompt → structured suggestion (summary, code, components used, explanation, a11y notes, suggested tests) →
+  copy. Loading, empty-prompt, timeout, network, provider, invalid-output and retry states handled. Demo mode is
+  clearly labelled and never presented as live output.
+- No provider API key in the frontend.
 
 ## Progress log
 
-- **Slice 0** — Repository inspected, plan written.
-- **Slice 1** — Vite + React 19 + MUI 9 + TS strict scaffold. Design tokens (`src/theme/tokens.ts`) feed a
-  CSS-variables MUI theme with light/dark schemes. Router with layout route, code-split platform pages.
-  App shell: responsive drawer, skip link, focus management on route change, global search (`/` shortcut).
-  Relational dataset + repository layer. Typecheck passes.
-- **Slice 2** — Home portal: hero with vehicle-architecture nav, six domain cards, featured manual
-  (BR-0012) with tabs, exploded view with keyboard-accessible hotspots + parts list, compact AI
-  assistant. Assistant engine built early (home embeds it) with 9 unit tests.
-- **Slice 3** — Manuals, parts, suppliers, systems and manufacturing list pages with search and
-  filters synced to the URL (`?q=`, `?system=`, `?status=`, `?region=`); sortable typed `DataTable`.
-  Detail pages for manuals, parts, suppliers and systems link every relationship both ways
-  (manual → parts → suppliers → parts → manuals). Dataset integrity + relationship tests (13 total, passing).
-- **Slice 4** — Component Lab (`/lab/:id`): typed registry of 13 components, each with editable
-  controls, per-preview light/dark scheme (scoped via the theme's `data-color-scheme` attribute
-  selector), generated usage code with copy, API table and do/don't guidelines. New `ConfirmDialog`.
-  Design Tokens page renders palette, semantic roles, live WCAG contrast, type scale, spacing,
-  radius and elevation from `tokens.ts`. Tests: token contrast (AA in both schemes), snippet
-  generator, and every Lab entry rendered + axe-checked (61 tests passing). axe caught `<a>`
-  elements directly inside `<ul>` in RelatedList, SideNav and the Lab nav; fixed with `ListItem`.
-- **Slice 5** — Full assistant page (`/assistant?q=` deep links auto-run; global search Enter routes
-  here). `AssistantProvider` interface: default offline deterministic engine; optional
-  `httpProvider` enabled by `VITE_ASSISTANT_ENDPOINT` posts to a backend proxy, grounds the reply
-  (drops unknown manual/part/supplier IDs and uncited facts) and falls back to the offline engine on
-  network, HTTP or contract errors. Panel supports cancellation, error state and follow-ups.
-  Tests: grounding, fallback (3 failure modes), config selection, panel interaction + axe (72 passing).
-  **No live LLM is used by default**; no backend proxy is included in this repo.
-- **Slice 6** — ESLint 9 (typescript-eslint, react-hooks, jsx-a11y, react-refresh). Playwright
-  (local Chrome) with 39 browser tests: core manual → part → supplier workflow, URL filter
-  persistence, assistant deep link, theme toggle persistence, Lab dark preview, Lab controls,
-  axe WCAG 2.2 AA on 12 pages × light/dark (with real color contrast), skip link, mobile drawer
-  and no horizontal overflow at 412px. A fixture fails any test that logs a browser console error.
-  Vitest: component behavior (DataTable sort + aria-sort, FilterChips, SearchField, ConfirmDialog)
-  and every route rendered with a single h1 + axe (107 tests). Accessibility & Testing page written.
-  `npm run check` runs typecheck → lint → unit → build.
-  Bugs found and fixed by these checks: StatusChip text 4.39:1 on its tint (now uses tonal tokens,
-  contrast-tested); StrictMode stole focus to `<main>` on first load, bypassing the skip link;
-  `<div>` inside `<p>` in Eyebrow; heading-level skips on /systems and home; inline link only
-  distinguishable by color.
-- **Slice 7** — README, `docs/` (architecture, component guidelines, accessibility, testing strategy,
-  demo script) and ADR 0001 (MUI foundation with a curated API). Vendor chunk split (app code ~28 kB gzip;
-  size warning gone). Playwright tests the production build when `CI=1`. Fixed the exploded-view active
-  callout (white on light primary in dark mode); commented intentional fixed colors.
-
-## Final verification (2026-10-13)
-
-| Check | Result |
-|---|---|
-| `npm ci` (clean) | OK, 0 vulnerabilities |
-| `npm run typecheck` | Pass |
-| `npm run lint` | Pass, 0 warnings |
-| `npm test` | 107 / 107 pass (9 files) |
-| `npm run build` | Pass, no chunk-size warning |
-| `npm run test:e2e` (dev server) | 39 / 39 pass |
-| `CI=1 npm run test:e2e` (production build) | 39 / 39 pass |
-| `npm run dev`, `npm run preview` | Serve 200; preview deep links resolve |
-| Manual visual pass | Light + dark desktop, 412px mobile (home, manuals, manual detail) |
-
-All P0 and P1 items are delivered. P2 items (Storybook, hosted visual regression, backend, auth, ERP/PLM
-integrations) were deliberately deferred.
+- **Slice 0** — Assessed repo, chose rework-in-place, wrote this plan.
+- **Slice 1** — Removed the portal domain (pages, dataset, search, portal assistant, domain components,
+  imagery with third-party badges). New structure: `components/{layout,ui,common}`, `features/*`,
+  `shared/catalog.ts` (framework-free component metadata for app + server). New tokens from the brief's
+  palette plus dimensions, focus ring and elevation; `primaryText` separates red text from red fills; global
+  `:focus-visible` ring and `prefers-reduced-motion` handling in the theme. Shell matches the mockup: wordmark,
+  "Component Engineering Lab" header, ⌘K command search (free text → AI assistant), theme toggle, catalog-driven
+  side nav (category items active for any component in the category). Routes for every nav item; secondary
+  pages code-split. Prettier added and applied. Checks: typecheck, lint, format, 63 unit tests (token contrast
+  incl. non-text 3:1 for focus ring), 19 browser tests all pass.
 
 ## Known issues
 
-- ConfirmDialog renders in a portal, so the Lab's preview dark toggle does not apply to the open dialog.
-- No live LLM; no backend proxy ships with the repo.
-- Browser tests run in Chromium only; no screen-reader, zoom or forced-colors passes yet.
-- Home domain cards switch to 6 columns only at ≥1800px; 3 columns below that, since 6 columns were cramped.
+- Pages other than the shell are placeholders until their slices.
+- Browser specs were repointed at new routes; they are rewritten in slice 6.
