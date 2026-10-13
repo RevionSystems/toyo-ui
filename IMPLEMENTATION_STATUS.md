@@ -48,7 +48,7 @@ assistant to compose a confirmation dialog → receive a structured, validated s
 |---|---|---:|---|
 | 0 | Inspect and plan | 20 min | Done |
 | 1 | Foundation: remove portal, restructure, new tokens/palette, shell + nav, Prettier | 45 min | Done |
-| 2 | Component Lab workspace: preview (viewport sizes), properties, code/API/a11y/tests tabs | 75 min | Pending |
+| 2 | Component Lab workspace: preview (viewport sizes), properties, code/API/a11y/tests tabs | 75 min | Done |
 | 3 | Component library: Button, TextField, Alert, StatusBadge, Dialog, DataTable, EmptyState, LoadingState | 100 min | Pending |
 | 4 | Foundations, documentation, tests: token explorer, theme, API/Test explorers, component tests | 75 min | Pending |
 | 5 | AI integration: Express + Zod + Claude, demo mode, compose/tests/review workflows | 75 min | Pending |
@@ -77,8 +77,22 @@ assistant to compose a confirmation dialog → receive a structured, validated s
   side nav (category items active for any component in the category). Routes for every nav item; secondary
   pages code-split. Prettier added and applied. Checks: typecheck, lint, format, 63 unit tests (token contrast
   incl. non-text 3:1 for focus ring), 19 browser tests all pass.
+- **Slice 2** — Component Lab workspace at `/components/:id`, built end to end with `Button` as the first
+  component. Compact banner (breadcrumb, summary, quality badges, sibling switcher for multi-component
+  categories). Preview with Light/Dark scheme scoped via `data-color-scheme` and Desktop/Tablet/Mobile widths
+  (100% / 768 / 375px); playground plus a static gallery of variants, sizes, states, icons and long content;
+  error boundary around the preview. Properties panel with labelled controls and reset. Tabs: **Code**
+  (generated from the same state as the preview — complete example with imports), **API** (real
+  `export type`/`interface` declarations extracted from the component source via `?raw`, props table, API
+  decisions), **Accessibility** (requirements + on-demand axe run against the live preview), **Tests**
+  (expectations; results wired in slice 4), **Guidelines**. `CodeBlock` with a safe tokenizer (text spans only)
+  and a separate line-number gutter so copied code never includes numbers. Docs for Button live in
+  `shared/catalog.ts`. `Button` defaults `loadingPosition` to `start` so the label stays visible.
+  Tests: lab interactions (variant/icon/text/loading → preview + code), defaults omitted, reset, API tab
+  shows real declarations, unknown component 404, axe on page; highlighter and extractor units (74 total).
 
 ## Known issues
 
-- Pages other than the shell are placeholders until their slices.
+- Overview, Foundations and Engineering pages are placeholders until their slices.
+- Seven components show docs-only placeholders until slice 3.
 - Browser specs were repointed at new routes; they are rewritten in slice 6.

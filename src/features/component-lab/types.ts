@@ -1,35 +1,37 @@
+import type { ComponentId } from '@shared/catalog';
 import type { ReactNode } from 'react';
 
-/** An editable prop in the playground. `name` is constrained to the component's prop keys. */
+/** An editable prop in the playground. `name` is constrained to the playground state's keys. */
 export type Control<P> =
   | { kind: 'text'; name: keyof P & string; label?: string }
   | { kind: 'boolean'; name: keyof P & string; label?: string }
   | { kind: 'number'; name: keyof P & string; label?: string; min: number; max: number; step?: number }
   | { kind: 'select'; name: keyof P & string; label?: string; options: readonly string[] };
 
-export interface PropDoc {
-  name: string;
-  type: string;
-  default?: string;
-  required?: boolean;
-  description: string;
+export interface GallerySection {
+  title: string;
+  render: () => ReactNode;
 }
 
+/**
+ * Everything the lab needs to render a component interactively. Documentation
+ * (props, accessibility, tests, guidelines) lives in `shared/catalog.ts`.
+ *
+ * `P` is the playground state: usually the component's props, with non-serialisable
+ * values (icons, callbacks) represented by names so they can be edited and printed.
+ */
 export interface LabEntry<P> {
-  id: string;
-  name: string;
-  category: 'Brand' | 'Layout' | 'Data display' | 'Inputs' | 'Feedback' | 'Navigation';
-  description: string;
-  /** Initial playground values. Only fields with a control are editable. */
+  id: ComponentId;
   defaults: P;
   controls: Control<P>[];
-  render: (props: P) => ReactNode;
-  /** Usage snippet reflecting the current playground values. */
-  code: (props: P) => string;
-  props: PropDoc[];
-  guidelines: { do: string[]; dont: string[] };
+  /** Live preview of the configured instance. */
+  render: (state: P) => ReactNode;
+  /** Usage example generated from the same state as the preview. */
+  code: (state: P) => string;
+  /** Static showcase of variants and states. */
+  gallery?: GallerySection[];
 }
 
-/** Erases the prop type so entries for different components can share one array. */
+/** Erases `P` so entries for different components can share one registry. */
 export type AnyLabEntry = LabEntry<Record<string, unknown>>;
 export const defineEntry = <P>(entry: LabEntry<P>): AnyLabEntry => entry as unknown as AnyLabEntry;
