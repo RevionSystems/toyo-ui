@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -34,8 +35,8 @@ export function SideNav({ onNavigate }: { onNavigate?: () => void }) {
             {group.items.map((item) => {
               const active = isActive(item, pathname);
               return (
+                <ListItem key={item.href} disablePadding>
                 <ListItemButton
-                  key={item.href}
                   href={item.href}
                   onClick={onNavigate}
                   aria-current={active ? 'page' : undefined}
@@ -56,6 +57,7 @@ export function SideNav({ onNavigate }: { onNavigate?: () => void }) {
                   </ListItemIcon>
                   <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontSize: 14, fontWeight: active ? 600 : 400 } } }} />
                 </ListItemButton>
+                </ListItem>
               );
             })}
           </List>

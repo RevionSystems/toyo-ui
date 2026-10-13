@@ -2,6 +2,7 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
@@ -58,7 +59,8 @@ export function RelatedList({
       ) : (
         <List dense disablePadding>
           {items.map((item) => (
-            <ListItemButton key={item.id} href={item.href} sx={{ px: 1.5, borderRadius: 1, gap: 2, alignItems: 'center' }}>
+            <ListItem key={item.id} disablePadding>
+            <ListItemButton href={item.href} sx={{ px: 1.5, borderRadius: 1, gap: 2, alignItems: 'center' }}>
               <ListItemIcon aria-hidden sx={{ minWidth: 0, color: 'text.secondary' }}>
                 {icon}
               </ListItemIcon>
@@ -79,6 +81,7 @@ export function RelatedList({
               </Box>
               {item.trailing}
             </ListItemButton>
+            </ListItem>
           ))}
         </List>
       )}

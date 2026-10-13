@@ -40,7 +40,7 @@ the same manuals/parts/suppliers back with links.
 | 1 | Foundation: Vite app, MUI theme + tokens, routing, app shell | 45 min | Done |
 | 2 | Automotive portal: home hero, domain cards, featured manual | 70 min | Done |
 | 3 | Engineering workflows: manuals, parts, suppliers, detail pages, search | 90 min | Done |
-| 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Pending |
+| 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Done |
 | 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Pending |
 | 6 | Tests and documentation | 45 min | Pending |
 | 7 | Stabilization: bug fixing, responsive pass, polish | 70 min | Pending |
@@ -73,8 +73,17 @@ Authentication, real backend/PLM integration, editing/workflow approval, real 3D
   filters synced to the URL (`?q=`, `?system=`, `?status=`, `?region=`); sortable typed `DataTable`.
   Detail pages for manuals, parts, suppliers and systems link every relationship both ways
   (manual → parts → suppliers → parts → manuals). Dataset integrity + relationship tests (13 total, passing).
+- **Slice 4** — Component Lab (`/lab/:id`): typed registry of 13 components, each with editable
+  controls, per-preview light/dark scheme (scoped via the theme's `data-color-scheme` attribute
+  selector), generated usage code with copy, API table and do/don't guidelines. New `ConfirmDialog`.
+  Design Tokens page renders palette, semantic roles, live WCAG contrast, type scale, spacing,
+  radius and elevation from `tokens.ts`. Tests: token contrast (AA in both schemes), snippet
+  generator, and every Lab entry rendered + axe-checked (61 tests passing). axe caught `<a>`
+  elements directly inside `<ul>` in RelatedList, SideNav and the Lab nav; fixed with `ListItem`.
 
 ## Known issues
 
 - Dark mode not yet visually verified (headless Chrome ignores the forced color-scheme flag). Check in slice 7.
+- Main JS chunk is 237 kB gzip (MUI + React); Vite warns at 500 kB minified. Split a vendor chunk in slice 7.
+- ConfirmDialog renders in a portal, so the Lab's preview dark toggle does not apply to the open dialog.
 - Home domain cards switch to 6 columns only at ≥1800px; 3 columns below that, since 6 columns were cramped.

@@ -1,4 +1,5 @@
 /** Public API of the Toyo-ui component library. */
+export { ConfirmDialog, type ConfirmDialogProps } from './ConfirmDialog';
 export { DataTable, type Column, type DataTableProps } from './DataTable';
 export { DomainCard, type DomainCardProps } from './DomainCard';
 export { EmptyState, type EmptyStateProps } from './EmptyState';
