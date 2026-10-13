@@ -21,6 +21,7 @@ export function SystemsPage() {
               description={s.description}
               image={s.image}
               href={`/systems/${s.id}`}
+              headingLevel="h2"
               meta={[`${manualsForSystem(s.id).length} manuals`, `${partsForSystem(s.id).length} parts`]}
             />
           </li>

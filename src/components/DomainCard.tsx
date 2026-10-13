@@ -17,10 +17,12 @@ export interface DomainCardProps {
   /** Short facts rendered in the footer, separated by dots. */
   meta?: string[];
   href: string;
+  /** Heading level for the title; set to fit the page outline. */
+  headingLevel?: 'h2' | 'h3';
 }
 
 /** Navigational card for a top-level knowledge domain. The whole card is one link. */
-export function DomainCard({ index, overline, title, description, image, imageAlt = '', meta = [], href }: DomainCardProps) {
+export function DomainCard({ index, overline, title, description, image, imageAlt = '', meta = [], href, headingLevel = 'h3' }: DomainCardProps) {
   return (
     <Card sx={{ height: '100%', transition: 'border-color 200ms, box-shadow 200ms', '&:hover': { borderColor: 'text.secondary' } }}>
       <CardActionArea href={href} sx={{ height: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start' }}>
@@ -35,7 +37,7 @@ export function DomainCard({ index, overline, title, description, image, imageAl
           loading="lazy"
           sx={{ width: '100%', aspectRatio: '2 / 1', objectFit: 'cover', borderRadius: 1, bgcolor: 'surfaceMuted', display: 'block' }}
         />
-        <Typography variant="h3" component="h3" sx={{ mt: 4, mb: 1.5 }}>
+        <Typography variant="h3" component={headingLevel} sx={{ mt: 4, mb: 1.5 }}>
           {title}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ flexGrow: 1 }}>

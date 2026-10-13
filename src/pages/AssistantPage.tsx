@@ -32,7 +32,7 @@ export function AssistantPage() {
       />
       <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' }, alignItems: 'start' }}>
         <Card sx={{ p: { xs: 4, md: 6 }, minHeight: 480 }}>
-          <AssistantPanel variant="full" initialQuery={q} autoRun />
+          <AssistantPanel key={q} variant="full" initialQuery={q} autoRun />
         </Card>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Card component="section" aria-labelledby="how-title" sx={{ p: 4 }}>

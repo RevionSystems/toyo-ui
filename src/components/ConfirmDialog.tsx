@@ -50,6 +50,8 @@ export function ConfirmDialog({
         </DialogContent>
       )}
       <DialogActions sx={{ px: 6, pb: 5 }}>
+        {/* WAI-ARIA dialog pattern: initial focus on the least destructive action. */}
+        {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
         <Button onClick={onCancel} variant="outlined" autoFocus>
           {cancelLabel}
         </Button>

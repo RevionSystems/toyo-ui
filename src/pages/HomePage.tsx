@@ -6,6 +6,7 @@ import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { visuallyHidden } from '@mui/utils';
 import { DomainCard, Eyebrow, StatusChip } from '@/components';
 import { getManual, listSystems, platformStats } from '@/data/repository';
 import { AssistantPanel } from '@/features/assistant/AssistantPanel';
@@ -113,7 +114,10 @@ export function HomePage() {
       </Box>
 
       {/* Domains */}
-      <Box component="section" aria-label="Knowledge domains" sx={{ mb: 6 }}>
+      <Box component="section" aria-labelledby="domains-title" sx={{ mb: 6 }}>
+        <Typography id="domains-title" variant="h2" sx={visuallyHidden}>
+          Knowledge domains
+        </Typography>
         <Box
           component="ul"
           sx={{

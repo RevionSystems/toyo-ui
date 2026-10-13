@@ -42,7 +42,7 @@ the same manuals/parts/suppliers back with links.
 | 3 | Engineering workflows: manuals, parts, suppliers, detail pages, search | 90 min | Done |
 | 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Done |
 | 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Done |
-| 6 | Tests and documentation | 45 min | Pending |
+| 6 | Tests, lint, browser tests, accessibility | 45 min | Done |
 | 7 | Stabilization: bug fixing, responsive pass, polish | 70 min | Pending |
 
 ## Acceptance criteria
@@ -87,6 +87,18 @@ Authentication, real backend/PLM integration, editing/workflow approval, real 3D
   network, HTTP or contract errors. Panel supports cancellation, error state and follow-ups.
   Tests: grounding, fallback (3 failure modes), config selection, panel interaction + axe (72 passing).
   **No live LLM is used by default**; no backend proxy is included in this repo.
+- **Slice 6** — ESLint 9 (typescript-eslint, react-hooks, jsx-a11y, react-refresh). Playwright
+  (local Chrome) with 39 browser tests: core manual → part → supplier workflow, URL filter
+  persistence, assistant deep link, theme toggle persistence, Lab dark preview, Lab controls,
+  axe WCAG 2.2 AA on 12 pages × light/dark (with real color contrast), skip link, mobile drawer
+  and no horizontal overflow at 412px. A fixture fails any test that logs a browser console error.
+  Vitest: component behavior (DataTable sort + aria-sort, FilterChips, SearchField, ConfirmDialog)
+  and every route rendered with a single h1 + axe (107 tests). Accessibility & Testing page written.
+  `npm run check` runs typecheck → lint → unit → build.
+  Bugs found and fixed by these checks: StatusChip text 4.39:1 on its tint (now uses tonal tokens,
+  contrast-tested); StrictMode stole focus to `<main>` on first load, bypassing the skip link;
+  `<div>` inside `<p>` in Eyebrow; heading-level skips on /systems and home; inline link only
+  distinguishable by color.
 
 ## Known issues
 

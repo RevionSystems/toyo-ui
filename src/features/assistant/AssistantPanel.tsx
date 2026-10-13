@@ -10,7 +10,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useEffectEvent, useRef, useState, type FormEvent } from 'react';
 import { RelatedList, StatusChip } from '@/components';
 import { getSystem } from '@/data/repository';
 import { SUGGESTED_PROMPTS, type AssistantAnswer } from './engine';
@@ -20,7 +20,7 @@ export interface AssistantPanelProps {
   /** `compact` shows only the latest answer; `full` keeps the conversation. */
   variant?: 'compact' | 'full';
   initialQuery?: string;
-  /** Runs `initialQuery` on mount and whenever it changes. */
+  /** Runs `initialQuery` on mount. Remount (via `key`) to run a new deep-linked query. */
   autoRun?: boolean;
   /** Minimum time the loading state is shown, so fast local answers don't flash. Tests pass 0. */
   latencyMs?: number;
@@ -45,20 +45,21 @@ export function AssistantPanel({
 }: AssistantPanelProps) {
   const [input, setInput] = useState(initialQuery);
   const [turns, setTurns] = useState<Turn[]>([]);
-  const [pending, setPending] = useState(false);
+  // A deep-linked query starts in the loading state, so the effect below only does async work.
+  const [pending, setPending] = useState(autoRun && !!initialQuery);
   const [error, setError] = useState<string>();
   const inflight = useRef<AbortController>(undefined);
   const nextId = useRef(0);
 
-  const ask = async (q: string) => {
-    const query = q.trim();
-    if (!query) return;
+  const begin = () => {
     // A new question supersedes one still in flight.
     inflight.current?.abort();
     const controller = new AbortController();
     inflight.current = controller;
-    setPending(true);
-    setError(undefined);
+    return controller;
+  };
+
+  const execute = async (query: string, controller: AbortController) => {
     try {
       const [result] = await Promise.all([provider.ask(query, controller.signal), latencyMs > 0 ? wait(latencyMs) : null]);
       if (controller.signal.aborted) return;
@@ -72,18 +73,27 @@ export function AssistantPanel({
     }
   };
 
+  const ask = (q: string) => {
+    const query = q.trim();
+    if (!query) return;
+    const controller = begin();
+    setPending(true);
+    setError(undefined);
+    void execute(query, controller);
+  };
+
+  const runInitialQuery = useEffectEvent(() => {
+    if (autoRun && initialQuery.trim()) void execute(initialQuery.trim(), begin());
+  });
+
   useEffect(() => {
-    if (autoRun && initialQuery) {
-      setInput(initialQuery);
-      void ask(initialQuery);
-    }
+    runInitialQuery();
     return () => inflight.current?.abort();
-    // Re-run only when the deep-linked query changes.
-  }, [initialQuery]);
+  }, []);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!pending) void ask(input);
+    if (!pending) ask(input);
   };
 
   const compact = variant === 'compact';
@@ -97,7 +107,7 @@ export function AssistantPanel({
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              if (!pending) void ask(input);
+              if (!pending) ask(input);
             }
           }}
           multiline
@@ -131,7 +141,7 @@ export function AssistantPanel({
                 variant="outlined"
                 onClick={() => {
                   setInput(p);
-                  void ask(p);
+                  ask(p);
                 }}
                 sx={{ height: 'auto', py: 1, maxWidth: '100%', '& .MuiChip-label': { whiteSpace: 'normal', fontWeight: 500 } }}
               />
@@ -142,7 +152,7 @@ export function AssistantPanel({
 
       <Box aria-live="polite" aria-busy={pending} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {turns.map((t) => (
-          <AnswerView key={t.id} answer={t.answer} compact={compact} onFollowUp={(q) => void ask(q)} showQuestion={!compact} />
+          <AnswerView key={t.id} answer={t.answer} compact={compact} onFollowUp={ask} showQuestion={!compact} />
         ))}
         {error && <Alert severity="error">{error}</Alert>}
         {pending && (

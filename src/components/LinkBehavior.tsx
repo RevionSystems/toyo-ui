@@ -12,6 +12,8 @@ export const LinkBehavior = forwardRef<HTMLAnchorElement, LinkBehaviorProps>(fun
   ref,
 ) {
   if (typeof href === 'string' && /^(https?:|mailto:)/.test(href)) {
+    // Children arrive via `rest`; the consuming MUI component provides the accessible content.
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
     return <a ref={ref} href={href} target="_blank" rel="noreferrer" {...rest} />;
   }
   return <RouterLink ref={ref} to={href} {...rest} />;

@@ -1,18 +1,13 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { useState } from 'react';
 import {
-  ConfirmDialog,
   DataTable,
   DomainCard,
   EmptyState,
   Eyebrow,
-  FilterChips,
   MetaList,
   PageHeader,
   RelatedList,
-  SearchField,
   StatCard,
   StatusChip,
   Wordmark,
@@ -28,67 +23,11 @@ import {
   type WordmarkProps,
 } from '@/components';
 import { getManual, listParts, partsForManual } from '@/data/repository';
+import { ConfirmDialogDemo, FilterChipsDemo, SearchFieldDemo } from './demos';
 import { defineEntry, type AnyLabEntry } from './types';
 import { jsx, raw } from './jsx';
 
 const STATUSES: readonly Status[] = ['approved', 'released', 'in-review', 'conditional', 'under-review', 'draft', 'obsolete'];
-
-/* Stateful demos: the playground controls the static props, the demo owns interaction state. */
-
-function SearchFieldDemo(p: Pick<SearchFieldProps, 'label' | 'placeholder' | 'showLabel' | 'size'>) {
-  const [value, setValue] = useState('');
-  const [submitted, setSubmitted] = useState<string>();
-  return (
-    <Box sx={{ width: '100%', maxWidth: 420 }}>
-      <SearchField {...p} value={value} onChange={setValue} onSubmit={setSubmitted} />
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-        Value: “{value}” {submitted !== undefined && `· Last submitted: “${submitted}”`}
-      </Typography>
-    </Box>
-  );
-}
-
-function FilterChipsDemo({ label, allLabel, showCounts }: { label: string; allLabel: string; showCounts: boolean }) {
-  const [value, setValue] = useState<'braking' | 'battery' | 'chassis' | null>(null);
-  return (
-    <FilterChips
-      label={label}
-      allLabel={allLabel}
-      value={value}
-      onChange={setValue}
-      options={[
-        { value: 'braking', label: 'Braking', count: showCounts ? 9 : undefined },
-        { value: 'battery', label: 'Battery', count: showCounts ? 4 : undefined },
-        { value: 'chassis', label: 'Chassis', count: showCounts ? 3 : undefined },
-      ]}
-    />
-  );
-}
-
-function ConfirmDialogDemo(p: Pick<ConfirmDialogProps, 'title' | 'description' | 'confirmLabel' | 'cancelLabel' | 'tone'>) {
-  const [open, setOpen] = useState(false);
-  const [result, setResult] = useState<string>();
-  return (
-    <Box>
-      <Button variant="contained" color={p.tone === 'destructive' ? 'error' : 'primary'} onClick={() => setOpen(true)}>
-        Open dialog
-      </Button>
-      {result && <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>Result: {result}</Typography>}
-      <ConfirmDialog
-        {...p}
-        open={open}
-        onConfirm={() => {
-          setOpen(false);
-          setResult('confirmed');
-        }}
-        onCancel={() => {
-          setOpen(false);
-          setResult('cancelled');
-        }}
-      />
-    </Box>
-  );
-}
 
 const sampleParts = partsForManual(getManual('BR-0012')!).slice(0, 4);
 
@@ -249,6 +188,7 @@ export const registry: AnyLabEntry[] = [
       { name: 'index', type: 'number', description: 'Sequence number.' },
       { name: 'imageAlt', type: 'string', default: "''", description: 'Alt text; empty marks the image decorative.' },
       { name: 'meta', type: 'string[]', default: '[]', description: 'Footer facts, dot-separated.' },
+      { name: 'headingLevel', type: "'h2' | 'h3'", default: "'h3'", description: 'Title heading level; match the page outline.' },
     ],
     guidelines: {
       do: ['Render inside a list (ul/li) when showing several.', 'Leave imageAlt empty when the title already says it.'],

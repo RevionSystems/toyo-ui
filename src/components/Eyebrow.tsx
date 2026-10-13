@@ -20,7 +20,7 @@ export function Eyebrow({ children, accent = false, index, component = 'p' }: Ey
       component={component}
       sx={{ display: 'flex', alignItems: 'center', gap: 2.5, color: 'text.primary', m: 0 }}
     >
-      {accent && <Box aria-hidden sx={{ width: 24, height: 2, bgcolor: 'primary.main', flexShrink: 0 }} />}
+      {accent && <Box component="span" aria-hidden sx={{ display: 'inline-block', width: 24, height: 2, bgcolor: 'primary.main', flexShrink: 0 }} />}
       {index !== undefined && (
         <Box component="span" sx={{ color: 'text.secondary', fontWeight: 500 }}>
           {String(index).padStart(2, '0')}

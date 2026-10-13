@@ -11,5 +11,5 @@ export { PageHeader, type Crumb, type PageHeaderProps } from './PageHeader';
 export { RelatedList, type RelatedItem, type RelatedListProps } from './RelatedList';
 export { SearchField, type SearchFieldProps } from './SearchField';
 export { StatCard, type StatCardProps } from './StatCard';
-export { StatusChip, statusLabel, type Status, type StatusChipProps } from './StatusChip';
+export { StatusChip, type Status, type StatusChipProps } from './StatusChip';
 export { Wordmark, type WordmarkProps } from './Wordmark';

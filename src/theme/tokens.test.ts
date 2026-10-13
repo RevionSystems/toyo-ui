@@ -18,8 +18,14 @@ describe.each(['light', 'dark'] as const)('%s scheme contrast', (scheme) => {
     ['success on surface', s.success, s.surface],
     ['warning on surface', s.warning, s.surface],
     ['info on surface', s.info, s.surface],
+    // StatusChip tonal pairs
+    ['success on successBg', s.success, s.successBg],
+    ['warning on warningBg', s.warning, s.warningBg],
+    ['info on infoBg', s.info, s.infoBg],
+    ['textSecondary on background', s.textSecondary, s.background],
+    ['primary on background', s.primary, s.background],
   ])('%s meets WCAG AA (4.5:1)', (_, fg, bg) => {
-    expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(fg, bg), `${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
   });
 });
 

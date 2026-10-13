@@ -11,9 +11,12 @@ declare module '@mui/material/styles' {
   }
   interface Palette {
     surfaceMuted: string;
+    /** Low-emphasis backgrounds for status tones (chips, banners). */
+    tonal: { success: string; warning: string; info: string };
   }
   interface PaletteOptions {
     surfaceMuted?: string;
+    tonal?: { success: string; warning: string; info: string };
   }
 }
 
@@ -37,6 +40,7 @@ function schemePalette(scheme: 'light' | 'dark') {
     text: { primary: s.textPrimary, secondary: s.textSecondary },
     divider: s.border,
     surfaceMuted: s.surfaceMuted,
+    tonal: { success: s.successBg, warning: s.warningBg, info: s.infoBg },
   };
 }
 

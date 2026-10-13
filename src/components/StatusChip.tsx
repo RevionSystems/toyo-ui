@@ -30,15 +30,15 @@ export function StatusChip({ status, size = 'small' }: StatusChipProps) {
         if (tone === 'neutral') {
           return { bgcolor: 'surfaceMuted', color: 'text.secondary', border: 1, borderColor: 'divider' };
         }
-        const main = (theme.vars ?? theme).palette[tone].main;
+        const palette = (theme.vars ?? theme).palette;
+        const main = palette[tone].main;
+        // Text/background pairs are contrast-tested in tokens.test.ts.
         return {
           color: main,
-          bgcolor: `color-mix(in srgb, ${main} 12%, transparent)`,
+          bgcolor: palette.tonal[tone],
           border: `1px solid color-mix(in srgb, ${main} 30%, transparent)`,
         };
       }}
     />
   );
 }
-
-export const statusLabel = (status: Status) => STATUS_META[status].label;

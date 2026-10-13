@@ -24,12 +24,12 @@ export function AppShell() {
   const mainRef = useRef<HTMLElement>(null);
 
   // Move focus to main content on route change so screen-reader users hear the new page.
-  const first = useRef(true);
+  // Compare against the previous path (not a "first render" flag) so StrictMode's double
+  // effect invocation doesn't steal focus on initial load.
+  const previousPath = useRef(pathname);
   useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
+    if (previousPath.current === pathname) return;
+    previousPath.current = pathname;
     window.scrollTo(0, 0);
     mainRef.current?.focus({ preventScroll: true });
   }, [pathname]);
