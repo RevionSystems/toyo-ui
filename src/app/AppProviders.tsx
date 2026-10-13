@@ -5,7 +5,7 @@ import { theme } from '@/theme/theme';
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider theme={theme} defaultMode="light" disableTransitionOnChange>
+    <ThemeProvider theme={theme} defaultMode="system" disableTransitionOnChange>
       <CssBaseline enableColorScheme />
       {children}
     </ThemeProvider>

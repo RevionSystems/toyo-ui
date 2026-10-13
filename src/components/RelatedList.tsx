@@ -62,17 +62,17 @@ export function RelatedList({
               <ListItemIcon aria-hidden sx={{ minWidth: 0, color: 'text.secondary' }}>
                 {icon}
               </ListItemIcon>
-              <Box sx={{ minWidth: 0, flex: 1, display: 'flex', gap: 3, alignItems: 'baseline', flexWrap: 'wrap' }}>
+              <Box sx={{ minWidth: 0, flex: 1, py: 0.5 }}>
                 {item.code && (
-                  <Typography component="span" sx={{ fontFamily: 'monospace', fontSize: 12, color: 'text.secondary', minWidth: 86 }}>
+                  <Typography component="span" sx={{ display: 'block', fontFamily: 'monospace', fontSize: 11.5, color: 'text.secondary', lineHeight: 1.4 }}>
                     {item.code}
                   </Typography>
                 )}
-                <Typography component="span" sx={{ fontSize: 13, fontWeight: 500, flex: '1 1 140px' }}>
+                <Typography component="span" sx={{ display: 'block', fontSize: 13.5, fontWeight: 500, lineHeight: 1.35 }}>
                   {item.primary}
                 </Typography>
                 {item.secondary && (
-                  <Typography component="span" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                  <Typography component="span" sx={{ display: 'block', fontSize: 12, color: 'text.secondary', lineHeight: 1.4 }}>
                     {item.secondary}
                   </Typography>
                 )}

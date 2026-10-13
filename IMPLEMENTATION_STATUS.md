@@ -38,8 +38,8 @@ the same manuals/parts/suppliers back with links.
 |---|---|---:|---|
 | 0 | Inspect and plan | 20 min | Done |
 | 1 | Foundation: Vite app, MUI theme + tokens, routing, app shell | 45 min | Done |
-| 2 | Automotive portal: home hero, domain cards, featured manual | 70 min | Pending |
-| 3 | Engineering workflows: manuals, parts, suppliers, detail pages, search | 90 min | Pending |
+| 2 | Automotive portal: home hero, domain cards, featured manual | 70 min | Done |
+| 3 | Engineering workflows: manuals, parts, suppliers, detail pages, search | 90 min | Done |
 | 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Pending |
 | 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Pending |
 | 6 | Tests and documentation | 45 min | Pending |
@@ -66,7 +66,15 @@ Authentication, real backend/PLM integration, editing/workflow approval, real 3D
   CSS-variables MUI theme with light/dark schemes. Router with layout route, code-split platform pages.
   App shell: responsive drawer, skip link, focus management on route change, global search (`/` shortcut).
   Relational dataset + repository layer. Typecheck passes.
+- **Slice 2** — Home portal: hero with vehicle-architecture nav, six domain cards, featured manual
+  (BR-0012) with tabs, exploded view with keyboard-accessible hotspots + parts list, compact AI
+  assistant. Assistant engine built early (home embeds it) with 9 unit tests.
+- **Slice 3** — Manuals, parts, suppliers, systems and manufacturing list pages with search and
+  filters synced to the URL (`?q=`, `?system=`, `?status=`, `?region=`); sortable typed `DataTable`.
+  Detail pages for manuals, parts, suppliers and systems link every relationship both ways
+  (manual → parts → suppliers → parts → manuals). Dataset integrity + relationship tests (13 total, passing).
 
 ## Known issues
 
-_None yet._
+- Dark mode not yet visually verified (headless Chrome ignores the forced color-scheme flag). Check in slice 7.
+- Home domain cards switch to 6 columns only at ≥1800px; 3 columns below that, since 6 columns were cramped.
