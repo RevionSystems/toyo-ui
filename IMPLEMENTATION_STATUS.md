@@ -43,7 +43,7 @@ the same manuals/parts/suppliers back with links.
 | 4 | Component Lab: typed shared components, playground, code examples, tokens page | 90 min | Done |
 | 5 | AI Assistant: query → ranked manuals/parts/suppliers | 50 min | Done |
 | 6 | Tests, lint, browser tests, accessibility | 45 min | Done |
-| 7 | Stabilization: bug fixing, responsive pass, polish | 70 min | Pending |
+| 7 | Documentation, stabilization, final verification | 70 min | Done |
 
 ## Acceptance criteria
 
@@ -99,10 +99,31 @@ Authentication, real backend/PLM integration, editing/workflow approval, real 3D
   contrast-tested); StrictMode stole focus to `<main>` on first load, bypassing the skip link;
   `<div>` inside `<p>` in Eyebrow; heading-level skips on /systems and home; inline link only
   distinguishable by color.
+- **Slice 7** — README, `docs/` (architecture, component guidelines, accessibility, testing strategy,
+  demo script) and ADR 0001 (MUI foundation with a curated API). Vendor chunk split (app code ~28 kB gzip;
+  size warning gone). Playwright tests the production build when `CI=1`. Fixed the exploded-view active
+  callout (white on light primary in dark mode); commented intentional fixed colors.
+
+## Final verification (2026-10-13)
+
+| Check | Result |
+|---|---|
+| `npm ci` (clean) | OK, 0 vulnerabilities |
+| `npm run typecheck` | Pass |
+| `npm run lint` | Pass, 0 warnings |
+| `npm test` | 107 / 107 pass (9 files) |
+| `npm run build` | Pass, no chunk-size warning |
+| `npm run test:e2e` (dev server) | 39 / 39 pass |
+| `CI=1 npm run test:e2e` (production build) | 39 / 39 pass |
+| `npm run dev`, `npm run preview` | Serve 200; preview deep links resolve |
+| Manual visual pass | Light + dark desktop, 412px mobile (home, manuals, manual detail) |
+
+All P0 and P1 items are delivered. P2 items (Storybook, hosted visual regression, backend, auth, ERP/PLM
+integrations) were deliberately deferred.
 
 ## Known issues
 
-- Dark mode not yet visually verified (headless Chrome ignores the forced color-scheme flag). Check in slice 7.
-- Main JS chunk is 237 kB gzip (MUI + React); Vite warns at 500 kB minified. Split a vendor chunk in slice 7.
 - ConfirmDialog renders in a portal, so the Lab's preview dark toggle does not apply to the open dialog.
+- No live LLM; no backend proxy ships with the repo.
+- Browser tests run in Chromium only; no screen-reader, zoom or forced-colors passes yet.
 - Home domain cards switch to 6 columns only at ≥1800px; 3 columns below that, since 6 columns were cramped.

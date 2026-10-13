@@ -78,7 +78,7 @@ export function HomePage() {
               position: 'absolute',
               inset: 0,
               display: { xs: 'none', lg: 'block' },
-              background: (t) => `linear-gradient(90deg, ${t.vars?.palette.background.paper ?? '#fff'} 0%, transparent 22%)`,
+              background: 'linear-gradient(90deg, var(--toyo-palette-background-paper) 0%, transparent 22%)',
             }}
           />
           <Card

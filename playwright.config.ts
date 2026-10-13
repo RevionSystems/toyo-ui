@@ -23,9 +23,12 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'], channel: 'chrome' }, testMatch: /responsive\.spec\.ts/ },
   ],
   webServer: {
-    command: `npx vite --port ${PORT} --strictPort --host 127.0.0.1`,
+    // CI tests the production build; locally the dev server gives faster feedback.
+    command: process.env.CI
+      ? `npm run build && npx vite preview --port ${PORT} --strictPort --host 127.0.0.1`
+      : `npx vite --port ${PORT} --strictPort --host 127.0.0.1`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
+    timeout: 120_000,
   },
 });

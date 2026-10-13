@@ -161,6 +161,7 @@ function Playground({ entry }: { entry: AnyLabEntry }) {
             {copied ? 'Copied' : 'Copy code'}
           </Button>
         </Box>
+        {/* Code blocks stay dark in both schemes, like most editors. */}
         <Box
           component="pre"
           tabIndex={0}

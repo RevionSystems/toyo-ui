@@ -41,6 +41,7 @@ export function ExplodedView({ image, imageAlt, hotspots, partIds }: ExplodedVie
       <Box role="tabpanel" id="ev-panel-0" aria-labelledby="ev-tab-0" hidden={tab !== 0}>
         {tab === 0 && (
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '3fr 2fr' }, gap: 4, alignItems: 'center' }}>
+            {/* Fixed light backdrop matches the studio photograph in both color schemes. */}
             <Box sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden', bgcolor: '#EEF0F2' }}>
               <Box component="img" src={image} alt={imageAlt} sx={{ width: '100%', display: 'block' }} />
               {hotspots.map((h, i) => {
@@ -67,9 +68,10 @@ export function ExplodedView({ image, imageAlt, hotspots, partIds }: ExplodedVie
                       font: 'inherit',
                       fontSize: 12,
                       fontWeight: 700,
-                      color: '#fff',
+                      // Inactive callouts sit on a photo, so they use a fixed dark chip with white text.
+                      color: isActive ? 'primary.contrastText' : '#fff',
                       bgcolor: isActive ? 'primary.main' : 'rgba(17,19,21,0.8)',
-                      boxShadow: isActive ? '0 0 0 4px rgba(200,16,46,0.3)' : 'none',
+                      boxShadow: isActive ? '0 0 0 4px color-mix(in srgb, var(--toyo-palette-primary-main) 30%, transparent)' : 'none',
                       transition: 'background-color 150ms',
                       '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.main', outlineOffset: 2 },
                     }}
