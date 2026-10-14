@@ -101,8 +101,8 @@ export function SideNav({ onNavigate }: { onNavigate?: () => void }) {
           </List>
         ))}
       </Box>
-      {/* Decorative; hidden on short viewports so it never crowds the navigation. */}
-      <Box sx={{ p: 3, '@media (max-height: 940px)': { display: 'none' } }}>
+      {/* Decorative; hidden unless the viewport is tall enough to show the full navigation. */}
+      <Box sx={{ p: 3, '@media (max-height: 1100px)': { display: 'none' } }}>
         <Box
           sx={{
             position: 'relative',

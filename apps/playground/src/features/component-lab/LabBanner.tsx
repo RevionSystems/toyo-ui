@@ -7,7 +7,8 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { CATALOG, CATEGORIES, componentsInCategory, type ComponentId } from '@/catalog/catalog';
+import { ComponentStatusBadge } from './ComponentStatusBadge';
+import { CATALOG, CATEGORIES, componentsInCategory, importLine, type ComponentId } from '@/catalog/catalog';
 
 const BADGES = [
   { label: 'Accessible', icon: <AccessibilityNewOutlinedIcon /> },
@@ -77,10 +78,33 @@ export function LabBanner({ id }: { id: ComponentId }) {
             {doc.name}
           </Typography>
         </Breadcrumbs>
-        <Typography variant="display" component="h1" sx={{ mt: 2, mb: 1.5, fontSize: { xs: 30, md: 40 } }}>
-          {doc.name}
-        </Typography>
-        <Typography sx={{ color: '#D9DCE0', fontSize: 15, mb: 3 }}>{doc.summary}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mt: 2, mb: 1.5, flexWrap: 'wrap' }}>
+          <Typography variant="display" component="h1" sx={{ fontSize: { xs: 30, md: 40 } }}>
+            {doc.name}
+          </Typography>
+          <ComponentStatusBadge status={doc.status} size="medium" />
+        </Box>
+        <Typography sx={{ color: '#D9DCE0', fontSize: 15, mb: 2 }}>{doc.summary}</Typography>
+        <Box
+          component="code"
+          aria-label="Import statement"
+          sx={{
+            display: 'inline-block',
+            fontSize: 13,
+            color: '#E6E8EB',
+            bgcolor: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.18)',
+            borderRadius: 1,
+            px: 2,
+            py: 0.75,
+            mb: 3,
+            maxWidth: '100%',
+            overflowX: 'auto',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {importLine(id)}
+        </Box>
         <Box
           component="ul"
           aria-label="Quality attributes"

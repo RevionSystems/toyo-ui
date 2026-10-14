@@ -94,3 +94,14 @@ describe('Dialog', () => {
     expect(await axeViolations(screen.getByRole('dialog'))).toEqual([]);
   });
 });
+
+describe('Dialog container', () => {
+  it('portals into the given container instead of document.body', () => {
+    const host = document.createElement('div');
+    host.setAttribute('data-testid', 'host');
+    document.body.appendChild(host);
+    renderWithProviders(<Dialog open title="Scoped" onClose={() => {}} container={host} />);
+    expect(host).toContainElement(screen.getByRole('dialog', { name: 'Scoped' }));
+    host.remove();
+  });
+});

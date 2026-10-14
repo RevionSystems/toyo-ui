@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const statusBadgeDoc: ComponentDoc = {
   id: 'status-badge',
+  status: 'stable',
   name: 'StatusBadge',
   category: 'feedback',
   summary: 'Compact, non-interactive status label with consistent tones.',

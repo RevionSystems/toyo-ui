@@ -13,7 +13,7 @@ import SpaceBarOutlinedIcon from '@mui/icons-material/SpaceBarOutlined';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import type { ReactNode } from 'react';
-import { CATALOG, componentsInCategory, type CategoryId } from '@/catalog/catalog';
+import { CATALOG, CATEGORIES, componentsInCategory, type CategoryId } from '@/catalog/catalog';
 
 export interface NavItem {
   label: string;
@@ -37,33 +37,23 @@ const CATEGORY_ICONS: Record<CategoryId, ReactNode> = {
   'data-display': <TableChartOutlinedIcon />,
 };
 
-const CATEGORY_LABELS: Record<CategoryId, string> = {
-  buttons: 'Buttons',
-  inputs: 'Inputs',
-  feedback: 'Feedback',
-  overlays: 'Overlays',
-  'data-display': 'Data Display',
-};
-
-/** A category links to its first component and is active for any component in it. */
-const categoryItem = (category: CategoryId): NavItem => {
-  const ids = componentsInCategory(category);
-  return {
-    label: CATEGORY_LABELS[category],
-    href: `/components/${ids[0]}`,
-    icon: CATEGORY_ICONS[category],
-    isActive: (pathname) => ids.some((id) => pathname === `/components/${id}`),
-  };
-};
+/** Components in category order; beta components carry a badge so status is visible in navigation. */
+const componentItems = (): NavItem[] =>
+  CATEGORIES.flatMap((c) =>
+    componentsInCategory(c.id).map((id) => ({
+      label: CATALOG[id].name,
+      href: `/components/${id}`,
+      icon: CATEGORY_ICONS[c.id],
+      badge: CATALOG[id].status === 'beta' ? 'Beta' : undefined,
+    })),
+  );
 
 export const NAV: NavGroup[] = [
   {
-    label: 'Component library',
-    items: [
-      { label: 'Overview', href: '/', icon: <DashboardOutlinedIcon /> },
-      ...(Object.keys(CATEGORY_LABELS) as CategoryId[]).map(categoryItem),
-    ],
+    label: 'Library',
+    items: [{ label: 'Overview', href: '/', icon: <DashboardOutlinedIcon /> }],
   },
+  { label: 'Components', items: componentItems() },
   {
     label: 'Foundations',
     items: [
@@ -85,7 +75,6 @@ export const NAV: NavGroup[] = [
 ];
 
 /** Flat list of every destination, used by the command search. */
-export const ALL_DESTINATIONS = [
-  ...NAV.flatMap((g) => g.items.map((i) => ({ label: i.label, href: i.href, group: g.label }))),
-  ...Object.values(CATALOG).map((c) => ({ label: c.name, href: `/components/${c.id}`, group: 'Components' })),
-];
+export const ALL_DESTINATIONS = NAV.flatMap((g) =>
+  g.items.map((i) => ({ label: i.label, href: i.href, group: g.label })),
+);

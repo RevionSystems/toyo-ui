@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const textFieldDoc: ComponentDoc = {
   id: 'text-field',
+  status: 'stable',
   name: 'TextField',
   category: 'inputs',
   summary: 'Labelled text input with helper text, validation and error messaging.',

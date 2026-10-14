@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const alertDoc: ComponentDoc = {
   id: 'alert',
+  status: 'stable',
   name: 'Alert',
   category: 'feedback',
   summary: 'Inline status message with optional title, action and dismiss.',

@@ -25,7 +25,7 @@ test.describe('mobile layout', () => {
   test('navigation drawer opens, navigates and closes', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Open navigation' }).click();
-    await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Inputs' }).click();
+    await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'TextField' }).click();
     await expect(page).toHaveURL(/\/components\/text-field$/);
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeHidden();
   });

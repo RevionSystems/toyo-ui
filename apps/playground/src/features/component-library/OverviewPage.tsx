@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { CodeBlock } from '@/components/common/CodeBlock';
 import { Eyebrow } from '@/components/layout/Eyebrow';
 import { Button, StatusBadge } from '@toyo-ui/react';
+import { ComponentStatusBadge } from '@/features/component-lab/ComponentStatusBadge';
 import { testReport, testsForComponent } from '@/features/documentation/testReport';
 import { CATALOG, CATEGORIES, COMPONENT_IDS, componentsInCategory, type ComponentId } from '@/catalog/catalog';
 
@@ -116,6 +117,7 @@ export default function OverviewPage() {
                       {CATALOG[id].summary}
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+                      <ComponentStatusBadge status={CATALOG[id].status} />
                       {testBadge(id)}
                       <Typography variant="caption" color="text.secondary">
                         {CATALOG[id].props.length} props

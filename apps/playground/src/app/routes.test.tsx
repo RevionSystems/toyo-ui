@@ -27,14 +27,17 @@ describe('routes', () => {
     expect(await axeViolations(container)).toEqual([]);
   });
 
-  it('marks the category nav item active for any component in it', async () => {
+  it('lists components in the sidebar with status and marks the current one', async () => {
     const user = userEvent.setup();
     renderRoutes(routes, '/components/loading-state');
     // jsdom has no layout, so the shell renders its mobile drawer, closed.
     await user.click(await screen.findByRole('button', { name: 'Open navigation' }));
     const nav = await screen.findByRole('navigation', { name: 'Primary' });
-    expect(within(nav).getByRole('link', { name: 'Feedback' })).toHaveAttribute('aria-current', 'page');
-    expect(within(nav).getByRole('link', { name: 'Buttons' })).not.toHaveAttribute('aria-current');
+    const current = within(nav).getByRole('link', { name: /LoadingState/ });
+    expect(current).toHaveAttribute('aria-current', 'page');
+    expect(current).toHaveTextContent('Beta');
+    expect(within(nav).getByRole('link', { name: 'Button' })).not.toHaveAttribute('aria-current');
+    expect(within(nav).getByRole('link', { name: 'Button' })).not.toHaveTextContent('Beta');
   });
 });
 

@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const emptyStateDoc: ComponentDoc = {
   id: 'empty-state',
+  status: 'beta',
   name: 'EmptyState',
   category: 'feedback',
   summary: 'Placeholder for empty collections, zero results and load failures.',

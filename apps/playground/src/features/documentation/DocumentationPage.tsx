@@ -4,7 +4,9 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatusBadge } from '@toyo-ui/react';
-import { CATALOG, CATEGORIES, componentsInCategory } from '@/catalog/catalog';
+import { CodeBlock } from '@/components/common/CodeBlock';
+import { ComponentStatusBadge } from '@/features/component-lab/ComponentStatusBadge';
+import { CATALOG, CATEGORIES, componentsInCategory, importLine } from '@/catalog/catalog';
 
 const REPO_DOCS = [
   { file: 'README.md', about: 'Setup, commands, workspace structure, adding and consuming components.' },
@@ -71,6 +73,7 @@ export default function DocumentationPage() {
                   <Typography id={`doc-${id}-title`} variant="h2">
                     {doc.name}
                   </Typography>
+                  <ComponentStatusBadge status={doc.status} />
                   <StatusBadge
                     tone="neutral"
                     label={CATEGORIES.find((c) => c.id === doc.category)!.label}
@@ -80,7 +83,10 @@ export default function DocumentationPage() {
                     Open in Component Lab
                   </Link>
                 </Box>
-                <Typography sx={{ mb: 3, maxWidth: 760 }}>{doc.purpose}</Typography>
+                <Typography sx={{ mb: 2, maxWidth: 760 }}>{doc.purpose}</Typography>
+                <Box sx={{ mb: 3, maxWidth: 560 }}>
+                  <CodeBlock code={importLine(id)} label={`${doc.name} import statement`} showLineNumbers={false} />
+                </Box>
                 <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
                   <DocList
                     title="Props"

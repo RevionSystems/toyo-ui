@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const buttonDoc: ComponentDoc = {
   id: 'button',
+  status: 'stable',
   name: 'Button',
   category: 'buttons',
   summary: 'A flexible and accessible button for primary actions, navigation and user interactions.',

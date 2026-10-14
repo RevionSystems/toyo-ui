@@ -25,6 +25,17 @@ export interface ButtonProps extends Omit<MuiButtonProps, OmittedMuiProps> {
   loadingPosition?: 'start' | 'center' | 'end';
 }
 
+/**
+ * While loading, MUI applies its disabled styles. A busy button is not unavailable, so it keeps its
+ * variant colors and the spinner signals progress (the button still can't be activated).
+ */
+const LOADING_COLORS: Record<ButtonVariant, object> = {
+  primary: { bgcolor: 'primary.main', color: 'primary.contrastText' },
+  secondary: { bgcolor: 'surfaceMuted', color: 'text.primary', borderColor: 'divider' },
+  outline: { color: 'text.primary', borderColor: 'divider' },
+  text: { color: 'primaryText' },
+};
+
 const VARIANT_MAP: Record<ButtonVariant, Pick<MuiButtonProps, 'variant' | 'color'>> = {
   primary: { variant: 'contained', color: 'primary' },
   secondary: { variant: 'contained', color: 'inherit' },
@@ -58,6 +69,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           borderColor: 'divider',
           '&:hover': { bgcolor: 'action.hover' },
         },
+        loading && { '&.Mui-disabled': LOADING_COLORS[variant] },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       {...rest}

@@ -15,31 +15,62 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState, type ReactNode, type RefObject } from 'react';
 import { CodeBlock } from '@/components/common/CodeBlock';
-import { CATALOG, type ComponentId } from '@/catalog/catalog';
+import { CATALOG, importLine, type ComponentId } from '@/catalog/catalog';
 import { AxeCheck } from './AxeCheck';
 import { loadPublicTypes } from './source';
 import { TestResultsList } from '@/features/documentation/TestResultsList';
 import { REPORT_COMMAND, testReport, testsForComponent } from '@/features/documentation/testReport';
 
-const DETAIL_TABS = ['Code', 'API', 'Accessibility', 'Tests', 'Guidelines'] as const;
+const DETAIL_TABS = ['Usage', 'API', 'Accessibility', 'Tests'] as const;
 type DetailTab = (typeof DETAIL_TABS)[number];
 
 export interface DetailTabsProps {
   id: ComponentId;
-  /** Generated from the same state as the preview; undefined when the component has no lab entry. */
-  code?: string;
+  /** Generated from the same state as the preview. */
+  code: string;
   previewRef: RefObject<HTMLElement | null>;
 }
 
 export function DetailTabs({ id, code, previewRef }: DetailTabsProps) {
-  const [tab, setTab] = useState<DetailTab>('Code');
+  const [tab, setTab] = useState<DetailTab>('Usage');
   const doc = CATALOG[id];
 
   const panels: Record<DetailTab, ReactNode> = {
-    Code: code ? (
-      <CodeBlock code={code} label={`${doc.name} usage example (TypeScript)`} />
-    ) : (
-      <Typography color="text.secondary">No interactive example yet.</Typography>
+    Usage: (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <Typography sx={{ maxWidth: 760 }}>{doc.purpose}</Typography>
+        <Box>
+          <Typography variant="h4" component="h3" sx={{ mb: 1.5 }}>
+            Import
+          </Typography>
+          <CodeBlock code={importLine(id)} label={`${doc.name} import statement`} showLineNumbers={false} />
+        </Box>
+        <Box>
+          <Typography variant="h4" component="h3" sx={{ mb: 0.5 }}>
+            Example
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+            Generated from the current properties — it updates as you change them.
+          </Typography>
+          <CodeBlock code={code} label={`${doc.name} usage example (TypeScript)`} />
+        </Box>
+        <Box>
+          <Typography variant="h4" component="h3" sx={{ mb: 1.5 }}>
+            Variants and states
+          </Typography>
+          <Box component="ul" sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', listStyle: 'none', m: 0, p: 0 }}>
+            {doc.states.map((s) => (
+              <li key={s}>
+                <Chip size="small" label={s} variant="outlined" />
+              </li>
+            ))}
+          </Box>
+        </Box>
+        <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+          <GuidelineCard kind="do" items={doc.guidelines.do} />
+          <GuidelineCard kind="dont" items={doc.guidelines.dont} />
+        </Box>
+      </Box>
     ),
     API: <ApiPanel id={id} />,
     Accessibility: (
@@ -48,7 +79,7 @@ export function DetailTabs({ id, code, previewRef }: DetailTabsProps) {
           <Typography variant="h4" component="h3" sx={{ mb: 2 }}>
             Requirements
           </Typography>
-          <BulletList items={doc.accessibility ?? []} />
+          <BulletList items={doc.accessibility} />
         </Box>
         <Box>
           <Typography variant="h4" component="h3" sx={{ mb: 2 }}>
@@ -59,31 +90,6 @@ export function DetailTabs({ id, code, previewRef }: DetailTabsProps) {
       </Box>
     ),
     Tests: <TestsPanel id={id} />,
-    Guidelines: (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {doc.purpose && <Typography sx={{ maxWidth: 760 }}>{doc.purpose}</Typography>}
-        {doc.states && (
-          <Box>
-            <Typography variant="h4" component="h3" sx={{ mb: 1.5 }}>
-              Supported states
-            </Typography>
-            <Box component="ul" sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', listStyle: 'none', m: 0, p: 0 }}>
-              {doc.states.map((s) => (
-                <li key={s}>
-                  <Chip size="small" label={s} variant="outlined" />
-                </li>
-              ))}
-            </Box>
-          </Box>
-        )}
-        {doc.guidelines && (
-          <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
-            <GuidelineCard kind="do" items={doc.guidelines.do} />
-            <GuidelineCard kind="dont" items={doc.guidelines.dont} />
-          </Box>
-        )}
-      </Box>
-    ),
   };
 
   return (

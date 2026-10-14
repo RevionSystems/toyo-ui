@@ -28,6 +28,11 @@ export interface DialogProps {
   /** Controlled loading; combined with the promise-driven state. */
   loading?: boolean;
   size?: 'small' | 'medium' | 'large';
+  /**
+   * Portal target. Defaults to `document.body`. Pass an element to render the dialog inside a
+   * scoped theme or color scheme (e.g. a preview area) or a shadow root.
+   */
+  container?: HTMLElement | null;
 }
 
 const WIDTH = { small: 'xs', medium: 'sm', large: 'md' } as const;
@@ -48,6 +53,7 @@ export function Dialog({
   tone = 'default',
   loading = false,
   size = 'small',
+  container,
 }: DialogProps) {
   const titleId = useId();
   const descId = useId();
@@ -83,6 +89,7 @@ export function Dialog({
       aria-describedby={description ? descId : undefined}
       maxWidth={WIDTH[size]}
       fullWidth
+      container={container}
       slotProps={{ transition: { onEntered: focusInitial } }}
     >
       <DialogTitle
@@ -128,7 +135,7 @@ export function Dialog({
             ref={confirmRef}
             onClick={confirm}
             loading={busy}
-            sx={destructive ? { bgcolor: 'error.main' } : undefined}
+            sx={destructive ? { bgcolor: 'error.main', '&.Mui-disabled': { bgcolor: 'error.main' } } : undefined}
           >
             {confirmLabel}
           </Button>

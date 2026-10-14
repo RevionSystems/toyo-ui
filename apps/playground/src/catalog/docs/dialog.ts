@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const dialogDoc: ComponentDoc = {
   id: 'dialog',
+  status: 'stable',
   name: 'Dialog',
   category: 'overlays',
   summary: 'Modal dialog with labelled title, managed focus and async confirm.',
@@ -51,6 +52,12 @@ export const dialogDoc: ComponentDoc = {
       type: "'small' | 'medium' | 'large'",
       default: "'small'",
       description: 'Max width: 444 / 600 / 900px.',
+    },
+    {
+      name: 'container',
+      type: 'HTMLElement | null',
+      default: 'document.body',
+      description: 'Portal target. Render inside a scoped theme or color scheme, or a shadow root.',
     },
   ],
   apiDecisions: [

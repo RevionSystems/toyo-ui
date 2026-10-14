@@ -31,7 +31,7 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
 |---|---|---|
 | A | Audit and remove all AI functionality | Done |
 | B | pnpm workspace: `packages/theme`, `packages/react`, `apps/playground`; builds, exports, shared TS config | Done |
-| C | Component Lab refinements: status indicators, Preview / Usage / API structure, import examples | Pending |
+| C | Component Lab refinements: status indicators, Preview / Usage / API structure, import examples | Done |
 | D | `apps/consumer-demo`: independent app using only public exports | Pending |
 | E | CI workflow, docs (README, architecture, guidelines, accessibility, testing, demo script, ADR), final verification | Pending |
 
@@ -64,10 +64,20 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
   213 tests in 21 files, package builds, test report, playground build); 46 browser tests ✓.
   The exports map caught one deep import (`@toyo-ui/react/EmptyState`) in the playground.
 
+- **Slice C — Lab refinements.** Component lifecycle `status` (`stable` | `beta`) in the catalog: the six core
+  components from the brief are stable; LoadingState and EmptyState are beta. The sidebar now lists each
+  component (with a Beta badge where relevant) instead of categories; status also shows in the banner, Overview
+  cards and Documentation. Lab sections are **Preview** (top) plus tabs **Usage** (purpose, import line, generated
+  example, variants and states, do/don't), **API**, **Accessibility**, **Tests**. Every component shows its
+  `import { … } from '@toyo-ui/react'` line in the banner, Usage tab and Documentation page.
+  Fixed both open issues: loading `Button`s keep their variant colors (busy ≠ unavailable; destructive Dialog
+  confirm stays red); `Dialog` gained a documented `container` prop (portal target), which the lab uses via a
+  preview-container context so an open dialog follows the preview's light/dark scheme — verified in Chrome.
+  Search destinations de-duplicated; promo card now hides below 1100px viewport height (the longer nav).
+  `pnpm check` ✓ (215 tests); 46 browser tests ✓.
+
 ## Known issues
 
-- Dialog's loading confirm button uses MUI's grey disabled style instead of the danger tone.
-- Preview dark mode does not reach portalled UI (an open Dialog renders in the page scheme).
 - README and `docs/` are interim until slice E.
 - Declarations use extensionless relative imports (fine for bundler resolution, which the apps use; strict
   `NodeNext` consumers would need `.js` extensions).

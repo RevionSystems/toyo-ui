@@ -69,6 +69,18 @@ describe('Component Lab — Button', () => {
     expect(screen.getByRole('table', { name: 'Button props' })).toBeInTheDocument();
   });
 
+  it('organises docs into Usage, API, Accessibility and Tests with an import line and status', async () => {
+    renderRoutes(routes, '/components/button');
+    await screen.findByRole('heading', { level: 1, name: 'Button' });
+    const tabs = screen.getAllByRole('tab').map((t) => t.textContent);
+    expect(tabs).toEqual(['Usage', 'API', 'Accessibility', 'Tests']);
+    expect(screen.getByRole('tab', { name: 'Usage' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByLabelText('Button import statement')).toHaveTextContent(
+      "import { Button } from '@toyo-ui/react';",
+    );
+    expect(screen.getAllByText('Stable').length).toBeGreaterThan(0);
+  });
+
   it('shows a not-found page for unknown components', async () => {
     renderRoutes(routes, '/components/carousel');
     expect(await screen.findByRole('heading', { level: 1, name: 'Component not found' })).toBeInTheDocument();

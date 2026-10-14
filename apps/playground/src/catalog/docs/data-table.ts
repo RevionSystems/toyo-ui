@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const dataTableDoc: ComponentDoc = {
   id: 'data-table',
+  status: 'stable',
   name: 'DataTable',
   category: 'data-display',
   summary: 'Typed, sortable table with loading, empty and responsive states.',

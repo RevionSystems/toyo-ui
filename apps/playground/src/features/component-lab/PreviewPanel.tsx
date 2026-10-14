@@ -6,7 +6,8 @@ import Card from '@mui/material/Card';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { forwardRef, useState, type ReactNode } from 'react';
+import { forwardRef, useCallback, useState, type ReactNode } from 'react';
+import { PreviewContainerContext } from './previewContainer';
 import { PreviewErrorBoundary } from './PreviewErrorBoundary';
 import type { GallerySection } from './types';
 
@@ -36,6 +37,16 @@ export const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(functi
 ) {
   const [viewport, setViewport] = useState<Viewport>('desktop');
   const [scheme, setScheme] = useState<'light' | 'dark'>('light');
+  const [frame, setFrame] = useState<HTMLDivElement | null>(null);
+  // Forward the frame to the parent's ref (axe target) and keep it for overlay portals.
+  const frameRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      setFrame(el);
+      if (typeof ref === 'function') ref(el);
+      else if (ref) ref.current = el;
+    },
+    [ref],
+  );
 
   return (
     <Card
@@ -94,7 +105,7 @@ export const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(functi
 
       <Box sx={{ flex: 1, bgcolor: 'surfaceMuted', p: { xs: 2, md: 4 }, overflowX: 'auto' }}>
         <Box
-          ref={ref}
+          ref={frameRef}
           data-color-scheme={scheme}
           data-testid="lab-preview"
           sx={{
@@ -125,7 +136,9 @@ export const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(functi
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 96 }}>
               <PreviewErrorBoundary resetKey={stateKey}>
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>{playground}</Box>
+                <PreviewContainerContext value={frame}>
+                  <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>{playground}</Box>
+                </PreviewContainerContext>
               </PreviewErrorBoundary>
             </Box>
           </Box>

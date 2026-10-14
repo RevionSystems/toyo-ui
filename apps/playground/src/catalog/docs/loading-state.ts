@@ -2,6 +2,7 @@ import type { ComponentDoc } from '../catalog';
 
 export const loadingStateDoc: ComponentDoc = {
   id: 'loading-state',
+  status: 'beta',
   name: 'LoadingState',
   category: 'feedback',
   summary: 'Announced loading indicator: spinner, linear bar or skeleton.',

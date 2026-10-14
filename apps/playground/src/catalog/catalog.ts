@@ -46,8 +46,12 @@ export interface PropSpec {
   description: string;
 }
 
+/** `stable`: API frozen, fully documented and tested. `beta`: tested, API may still change. */
+export type ComponentStatus = 'stable' | 'beta';
+
 export interface ComponentDoc {
   id: ComponentId;
+  status: ComponentStatus;
   /** Export name, e.g. `Button`. */
   name: string;
   category: CategoryId;
@@ -75,6 +79,9 @@ export const CATALOG: Record<ComponentId, ComponentDoc> = {
 
 export const componentsInCategory = (category: CategoryId) =>
   COMPONENT_IDS.filter((id) => CATALOG[id].category === category);
+
+/** Import line shown in docs, e.g. `import { Button } from '@toyo-ui/react';`. */
+export const importLine = (id: ComponentId) => `import { ${CATALOG[id].name} } from '@toyo-ui/react';`;
 
 export const isComponentId = (value: string): value is ComponentId =>
   (COMPONENT_IDS as readonly string[]).includes(value);

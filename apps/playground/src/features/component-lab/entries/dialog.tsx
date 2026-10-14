@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { Button, Dialog, TextField, type DialogProps } from '@toyo-ui/react';
 import { example, jsx, raw } from '../jsx';
+import { usePreviewContainer } from '../previewContainer';
 import { defineEntry } from '../types';
 
 interface DialogState {
@@ -20,6 +21,8 @@ interface DialogState {
 function DialogDemo({ state, triggerLabel = 'Open dialog' }: { state: DialogState; triggerLabel?: string }) {
   const [open, setOpen] = useState(false);
   const [outcome, setOutcome] = useState<string>();
+  // Portal into the preview frame so the dialog follows the preview's light/dark scheme.
+  const container = usePreviewContainer();
   const onConfirm: DialogProps['onConfirm'] = state.asyncConfirm
     ? () =>
         new Promise<void>((resolve) =>
@@ -54,6 +57,7 @@ function DialogDemo({ state, triggerLabel = 'Open dialog' }: { state: DialogStat
         cancelLabel={state.cancelLabel}
         tone={state.tone}
         size={state.size}
+        container={container}
         onConfirm={onConfirm}
         onClose={(reason) => {
           setOutcome(`closed (${reason})`);
