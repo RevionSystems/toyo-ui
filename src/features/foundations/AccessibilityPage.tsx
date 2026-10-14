@@ -140,7 +140,7 @@ export default function AccessibilityPage() {
       <Section id="gaps" title="Not yet verified">
         <Box component="ul" sx={{ m: 0, pl: 5, display: 'flex', flexDirection: 'column', gap: 1 }}>
           {[
-            'Screen-reader passes (VoiceOver + Safari, NVDA + Firefox) on the lab and assistant.',
+            'Screen-reader passes (VoiceOver + Safari, NVDA + Firefox) on the Component Lab.',
             '200% zoom and WCAG text-spacing overrides.',
             'Windows High Contrast / forced-colors mode.',
             'Dialog and Alert announcement timing across screen readers.',

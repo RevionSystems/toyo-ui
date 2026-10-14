@@ -18,6 +18,8 @@ describe('routes', () => {
     ['/engineering/tests', 'Test Explorer'],
     ['/engineering/docs', 'Documentation'],
     ['/nope', 'Page not found'],
+    // The AI assistant was removed; its old route must not resolve.
+    ['/engineering/assistant', 'Page not found'],
   ])('%s renders one h1 and passes axe', async (path, title) => {
     const { container } = renderRoutes(routes, path);
     expect(await screen.findByRole('heading', { level: 1, name: title })).toBeInTheDocument();
@@ -33,6 +35,24 @@ describe('routes', () => {
     const nav = await screen.findByRole('navigation', { name: 'Primary' });
     expect(within(nav).getByRole('link', { name: 'Feedback' })).toHaveAttribute('aria-current', 'page');
     expect(within(nav).getByRole('link', { name: 'Buttons' })).not.toHaveAttribute('aria-current');
+  });
+});
+
+describe('navigation and search', () => {
+  it('has no AI entries in the primary navigation', async () => {
+    const user = userEvent.setup();
+    renderRoutes(routes, '/');
+    await user.click(await screen.findByRole('button', { name: 'Open navigation' }));
+    const nav = await screen.findByRole('navigation', { name: 'Primary' });
+    expect(within(nav).queryByText(/\bAI\b|assistant/i)).not.toBeInTheDocument();
+  });
+
+  it('opens the highlighted component with Enter', async () => {
+    const user = userEvent.setup();
+    const { router } = renderRoutes(routes, '/');
+    const search = await screen.findByRole('combobox', { name: 'Search components and pages' });
+    await user.type(search, 'Dialog{Enter}');
+    expect(router.state.location.pathname).toBe('/components/dialog');
   });
 });
 

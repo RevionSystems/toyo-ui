@@ -12,8 +12,8 @@ type Destination = (typeof ALL_DESTINATIONS)[number];
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 /**
- * Header search over components and pages. ⌘K / Ctrl+K focuses it. Free text that
- * matches nothing is sent to the AI assistant as a prompt.
+ * Header search over components and pages. ⌘K / Ctrl+K focuses it; Enter opens the
+ * highlighted match.
  */
 export function CommandSearch() {
   const navigate = useNavigate();
@@ -32,33 +32,31 @@ export function CommandSearch() {
   }, []);
 
   return (
-    <Autocomplete<Destination, false, false, true>
-      freeSolo
+    <Autocomplete<Destination, false, false, false>
+      autoHighlight
       options={ALL_DESTINATIONS}
       groupBy={(o) => o.group}
-      getOptionLabel={(o) => (typeof o === 'string' ? o : o.label)}
+      getOptionLabel={(o) => o.label}
       inputValue={input}
       onInputChange={(_, v) => setInput(v)}
       onChange={(_, value) => {
-        if (value && typeof value !== 'string') navigate(value.href);
-        else if (typeof value === 'string' && value.trim())
-          navigate(`/engineering/assistant?q=${encodeURIComponent(value.trim())}`);
+        if (value) navigate(value.href);
         setInput('');
         inputRef.current?.blur();
       }}
-      noOptionsText="Press Enter to ask the AI assistant"
+      noOptionsText="No matching components or pages"
       sx={{ width: '100%', maxWidth: 520 }}
       renderInput={(params) => (
         <TextField
           {...params}
           inputRef={inputRef}
-          placeholder="Search components, props, or ask AI…"
+          placeholder="Search components and pages…"
           size="small"
           slotProps={{
             ...params.slotProps,
             htmlInput: {
               ...params.slotProps.htmlInput,
-              'aria-label': 'Search components and pages, or ask the AI assistant',
+              'aria-label': 'Search components and pages',
             },
             input: {
               ...params.slotProps.input,

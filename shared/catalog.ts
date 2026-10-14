@@ -10,8 +10,8 @@ import { textFieldDoc } from './docs/text-field';
 /**
  * Component catalog — framework-free metadata about the Toyo-ui library.
  *
- * Shared by the React app (navigation, docs, API explorer) and the AI server (model
- * context and allowlist). It must not import React or MUI so the server can load it.
+ * Used by the Component Lab for navigation, documentation and the API Explorer. Kept free of
+ * React and MUI so it is plain data that tests can validate on their own.
  */
 
 export const CATEGORIES = [

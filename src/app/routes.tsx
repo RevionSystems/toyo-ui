@@ -15,7 +15,6 @@ const AccessibilityPage = lazy(() => import('@/features/foundations/Accessibilit
 const ApiExplorerPage = lazy(() => import('@/features/documentation/ApiExplorerPage'));
 const TestExplorerPage = lazy(() => import('@/features/documentation/TestExplorerPage'));
 const DocumentationPage = lazy(() => import('@/features/documentation/DocumentationPage'));
-const AssistantPage = lazy(() => import('@/features/ai-assistant/AssistantPage'));
 
 const suspend = (node: ReactNode) => (
   <Suspense fallback={<LinearProgress aria-label="Loading page" />}>{node}</Suspense>
@@ -35,7 +34,6 @@ export const routes: RouteObject[] = [
       { path: 'engineering/api', element: suspend(<ApiExplorerPage />) },
       { path: 'engineering/tests', element: suspend(<TestExplorerPage />) },
       { path: 'engineering/docs', element: suspend(<DocumentationPage />) },
-      { path: 'engineering/assistant', element: suspend(<AssistantPage />) },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

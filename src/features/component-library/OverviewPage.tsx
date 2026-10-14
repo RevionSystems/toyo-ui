@@ -50,14 +50,14 @@ export default function OverviewPage() {
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 620, mb: 4 }}>
             Typed React components on Material UI, with live previews, generated examples, real TypeScript declarations,
-            automated accessibility checks and an AI assistant that composes with the library.
+            and automated accessibility checks.
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             <Button href="/components/button" endIcon={<ArrowForwardIcon />}>
               Open Component Lab
             </Button>
-            <Button variant="outline" href="/engineering/assistant">
-              Ask the AI assistant
+            <Button variant="outline" href="/foundations/tokens">
+              View design tokens
             </Button>
           </Box>
         </Box>

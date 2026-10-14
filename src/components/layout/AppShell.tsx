@@ -20,6 +20,8 @@ import { Wordmark } from './Wordmark';
 export function AppShell() {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('lg'));
+  // One search instance only: it owns the global ⌘K shortcut.
+  const wideHeader = useMediaQuery(theme.breakpoints.up('md'));
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
@@ -89,12 +91,12 @@ export function AppShell() {
                 Component Engineering Lab
               </Typography>
               <Typography component="p" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                Build. Explore. Test. With AI.
+                Build. Explore. Test.
               </Typography>
             </Box>
           </Box>
-          <Box sx={{ flex: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center', minWidth: 0 }}>
-            <CommandSearch />
+          <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', minWidth: 0 }}>
+            {wideHeader && <CommandSearch />}
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 'auto' }}>
             <ColorModeToggle />
@@ -117,9 +119,11 @@ export function AppShell() {
             </Box>
           </Box>
         </Toolbar>
-        <Box sx={{ display: { xs: 'block', md: 'none' }, px: 3, pb: 2.5 }}>
-          <CommandSearch />
-        </Box>
+        {!wideHeader && (
+          <Box sx={{ px: 3, pb: 2.5 }}>
+            <CommandSearch />
+          </Box>
+        )}
       </AppBar>
 
       <Drawer

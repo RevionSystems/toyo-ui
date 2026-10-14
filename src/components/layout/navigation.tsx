@@ -1,6 +1,5 @@
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined';
 import ApiOutlinedIcon from '@mui/icons-material/ApiOutlined';
-import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -81,7 +80,6 @@ export const NAV: NavGroup[] = [
       { label: 'API Explorer', href: '/engineering/api', icon: <ApiOutlinedIcon /> },
       { label: 'Test Explorer', href: '/engineering/tests', icon: <FactCheckOutlinedIcon /> },
       { label: 'Documentation', href: '/engineering/docs', icon: <DescriptionOutlinedIcon /> },
-      { label: 'AI Assistant', href: '/engineering/assistant', icon: <AutoAwesomeOutlinedIcon />, badge: 'New' },
     ],
   },
 ];

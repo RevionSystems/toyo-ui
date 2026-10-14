@@ -7,8 +7,8 @@ import { StatusBadge } from '@/components/ui';
 import { CATALOG, CATEGORIES, componentsInCategory } from '@shared/catalog';
 
 const REPO_DOCS = [
-  { file: 'README.md', about: 'Setup, commands, structure, AI configuration, limitations.' },
-  { file: 'docs/architecture.md', about: 'Layers, catalog/registry contracts, theme factory, AI server flow.' },
+  { file: 'README.md', about: 'Setup, commands, workspace structure, adding and consuming components.' },
+  { file: 'docs/architecture.md', about: 'Package boundaries, dependency direction, public exports, build strategy.' },
   { file: 'docs/component-guidelines.md', about: 'API conventions and the checklist for adding a component.' },
   { file: 'docs/accessibility.md', about: 'What is built in, how it is verified, known gaps.' },
   { file: 'docs/testing-strategy.md', about: 'Test layers, conventions and what is deliberately not tested.' },
@@ -25,7 +25,7 @@ export default function DocumentationPage() {
       <PageHeader
         overline="Engineering"
         title="Documentation"
-        description="Component reference generated from shared/catalog.ts — the same metadata the lab, API Explorer and AI assistant use — plus the engineering docs in the repository."
+        description="Component reference generated from shared/catalog.ts — the same metadata the lab and API Explorer use — plus the engineering docs in the repository."
       />
       <Box
         sx={{
