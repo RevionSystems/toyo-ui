@@ -445,7 +445,7 @@ export function Example() {
 - Composes MUI Dialog, DialogTitle, DialogContent and DialogActions into one component with a confirm/cancel contract — the common case needs no assembly.
 - `onClose` receives a typed reason ('escape' | 'backdrop' | 'cancel') instead of MUI's event + string.
 - `onConfirm` may return a promise; the dialog owns the pending state, disables Cancel and ignores Escape/backdrop until it settles, preventing double submits and lost requests.
-- Initial focus follows the WAI-ARIA pattern: Cancel for destructive dialogs, Confirm otherwise. Applied after the enter transition, not with autoFocus.
+- Initial focus follows the WAI-ARIA pattern: Cancel for destructive dialogs, Confirm otherwise. Applied after the enter transition, not with autoFocus, and never overrides focus the user has already moved into the dialog.
 
 ### Accessibility
 
@@ -453,6 +453,7 @@ export function Example() {
 - Focus moves into the dialog on open, is trapped while open, and returns to the trigger on close (MUI focus trap).
 - Escape closes the dialog unless a confirm is pending.
 - Destructive dialogs focus the least destructive action first.
+- If the user starts typing in a field before the enter transition ends, focus stays in that field.
 - The pending confirm button keeps its label and exposes aria-busy.
 
 ### Test coverage (`packages/react/src/Dialog.test.tsx`)
@@ -460,6 +461,7 @@ export function Example() {
 - Labelled by title and described by description.
 - Escape and Cancel call onClose with the right reason.
 - Initial focus: Cancel when destructive, Confirm otherwise.
+- Does not steal focus from a field the user is already typing in.
 - Async confirm shows loading, disables Cancel and blocks Escape until it resolves.
 - Focus stays inside while tabbing.
 - No axe violations.

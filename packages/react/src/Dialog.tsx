@@ -65,8 +65,14 @@ export function Dialog({
 
   // WAI-ARIA dialog pattern: destructive dialogs start on the least destructive action;
   // others start on the primary action. Applied once the enter transition finishes, after
-  // MUI's focus trap has focused the container.
-  const focusInitial = () => (destructive || !onConfirm ? cancelRef : confirmRef).current?.focus();
+  // MUI's focus trap has focused the (non-tabbable) container — unless the user has already
+  // moved focus to a control inside the dialog, e.g. started typing in a field. Moving focus
+  // then would send their remaining keystrokes to a button.
+  const focusInitial = (node: HTMLElement) => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && node.contains(active) && active.tabIndex >= 0) return;
+    (destructive || !onConfirm ? cancelRef : confirmRef).current?.focus();
+  };
 
   const confirm = async () => {
     if (!onConfirm) return;

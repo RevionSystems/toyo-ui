@@ -50,6 +50,8 @@ export default defineConfig({
     // The on-disk transform cache keys on a file's own content, so `import.meta.glob`
     // results (component-lab/source.ts) go stale when component files are added.
     fsModuleCache: false,
+    // Full-route integration tests; see asyncUtilTimeout in src/test/setup.ts.
+    testTimeout: 15_000,
     include: ['src/**/*.test.{ts,tsx}'],
   },
 });

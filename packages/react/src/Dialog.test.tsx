@@ -105,3 +105,24 @@ describe('Dialog container', () => {
     host.remove();
   });
 });
+
+describe('Dialog initial focus', () => {
+  it('does not steal focus from a field the user is already typing in', async () => {
+    // Initial focus is applied after the enter transition. If the user has already moved focus into the
+    // dialog (e.g. started typing), that must win; otherwise keystrokes after the transition are lost.
+    const user = userEvent.setup({ delay: null });
+    renderWithProviders(
+      <Dialog open title="Schedule" onClose={() => {}} onConfirm={() => {}} confirmLabel="Schedule">
+        <input aria-label="Service" />
+      </Dialog>,
+    );
+    const field = screen.getByRole('textbox', { name: 'Service' });
+    await user.click(field);
+    await user.keyboard('billing');
+    // Let the enter transition finish.
+    await new Promise((r) => setTimeout(r, 400));
+    await user.keyboard('-api');
+    expect(field).toHaveFocus();
+    expect(field).toHaveValue('billing-api');
+  });
+});

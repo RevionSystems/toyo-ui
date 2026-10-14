@@ -53,6 +53,8 @@ landmarks). Both are covered in the browser.
 - Heading levels skipped (h1 → h3) on two pages.
 - Inline links distinguishable only by color → always underlined.
 - `Alert announce={false}` still announced, because MUI falls back to `role="alert"`.
+- `Dialog` moved focus to its confirm button after the enter transition even when the user had already started
+  typing in a field, sending the rest of their input to the button. Found through a CI-only test failure.
 
 ## Not yet verified
 

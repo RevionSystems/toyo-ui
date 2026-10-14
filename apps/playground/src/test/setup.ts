@@ -1,8 +1,12 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { afterEach } from 'vitest';
 
 afterEach(() => cleanup());
+
+// Playground tests render whole routes (shell, lab, explorers). On shared CI runners with four projects in
+// parallel a full render can exceed Testing Library's 1 s default. Package unit tests keep the defaults.
+configure({ asyncUtilTimeout: 5000 });
 
 // jsdom does not implement matchMedia; MUI's useMediaQuery and color scheme code need it.
 if (!window.matchMedia) {
