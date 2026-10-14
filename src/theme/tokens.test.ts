@@ -25,6 +25,10 @@ describe.each(['light', 'dark'] as const)('%s scheme contrast', (scheme) => {
     ['warning on warningBg', s.warning, s.warningBg],
     ['info on infoBg', s.info, s.infoBg],
     ['error on errorBg', s.error, s.errorBg],
+    // Alert body text sits on the tonal backgrounds.
+    ['textPrimary on successBg', s.textPrimary, s.successBg],
+    ['textPrimary on warningBg', s.textPrimary, s.warningBg],
+    ['textPrimary on infoBg', s.textPrimary, s.infoBg],
     ['textPrimary on errorBg', s.textPrimary, s.errorBg],
   ])('%s meets AA', (_, fg, bg) => {
     expect(contrastRatio(fg, bg), `${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);

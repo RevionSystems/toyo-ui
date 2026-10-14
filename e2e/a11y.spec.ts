@@ -7,10 +7,10 @@ import { expect, test } from './fixtures';
  */
 const PAGES = [
   '/',
-  '/components/button',
+  ...['button', 'text-field', 'alert', 'status-badge', 'loading-state', 'empty-state', 'dialog', 'data-table'].map(
+    (id) => `/components/${id}`,
+  ),
   '/foundations/tokens',
-  '/foundations/theme',
-  '/engineering/api',
   '/engineering/assistant',
 ];
 

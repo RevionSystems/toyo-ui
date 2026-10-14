@@ -49,7 +49,7 @@ assistant to compose a confirmation dialog → receive a structured, validated s
 | 0 | Inspect and plan | 20 min | Done |
 | 1 | Foundation: remove portal, restructure, new tokens/palette, shell + nav, Prettier | 45 min | Done |
 | 2 | Component Lab workspace: preview (viewport sizes), properties, code/API/a11y/tests tabs | 75 min | Done |
-| 3 | Component library: Button, TextField, Alert, StatusBadge, Dialog, DataTable, EmptyState, LoadingState | 100 min | Pending |
+| 3 | Component library: Button, TextField, Alert, StatusBadge, Dialog, DataTable, EmptyState, LoadingState | 100 min | Done |
 | 4 | Foundations, documentation, tests: token explorer, theme, API/Test explorers, component tests | 75 min | Pending |
 | 5 | AI integration: Express + Zod + Claude, demo mode, compose/tests/review workflows | 75 min | Pending |
 | 6 | Quality: browser tests, CI, docs + ADR, final verification | 90 min | Pending |
@@ -90,9 +90,26 @@ assistant to compose a confirmation dialog → receive a structured, validated s
   `shared/catalog.ts`. `Button` defaults `loadingPosition` to `start` so the label stays visible.
   Tests: lab interactions (variant/icon/text/loading → preview + code), defaults omitted, reset, API tab
   shows real declarations, unknown component 404, axe on page; highlighter and extractor units (74 total).
+- **Slice 3** — Seven more components on MUI primitives, each with an exported props interface:
+  `TextField` (required `label`, `hideLabel`, `errorMessage`, blur-time `validate`, string `onChange`,
+  `maxLength` counter), `Alert` (severity → `role` alert/status, `announce={false}` for static content, tonal
+  tokens), `StatusBadge` (tone + required label, shared `StatusTone`), `LoadingState` (spinner/linear/skeleton,
+  always labelled, clamped progress), `EmptyState` (`kind`: no-data/no-results/error), `Dialog` (typed close
+  reasons, promise-aware `onConfirm` that blocks dismissal while pending, Cancel-first focus for destructive),
+  `DataTable` (generic, `<caption>`, `aria-sort`, loading/density/empty, `onRowClick` instead of router coupling).
+  Docs split into `shared/docs/*.ts`; `CATALOG` is now `Record<ComponentId, ComponentDoc>` and the lab
+  `REGISTRY` is `Record<ComponentId, AnyLabEntry>`, so a missing doc or entry is a type error. Lab entries with
+  controls, galleries and generated examples for all eight. Tests: one behavior file per component (59), a
+  registry suite (renders + axe, complete example, every state key has a control, every documented prop
+  exists on the real props interface), catalog completeness — 182 unit tests; browser axe (with contrast)
+  on all 8 component pages × light/dark — 29 browser tests.
+  Bugs found: `Alert announce={false}` still announced (MUI falls back to role="alert" when `role` is
+  undefined); Vitest's on-disk module cache served stale `import.meta.glob` results (disabled
+  `fsModuleCache`); DataTable caption rendered below the table.
 
 ## Known issues
 
 - Overview, Foundations and Engineering pages are placeholders until their slices.
-- Seven components show docs-only placeholders until slice 3.
+- A loading confirm button in Dialog uses MUI's grey disabled style rather than the danger tone.
+- Preview dark mode does not reach portalled UI (an open Dialog renders in the page scheme).
 - Browser specs were repointed at new routes; they are rewritten in slice 6.

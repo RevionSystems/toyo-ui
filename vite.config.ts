@@ -12,6 +12,9 @@ export default defineConfig({
     },
   },
   build: {
+    // axe-core (~660 kB) is the only chunk above Vite's 500 kB default, and it is lazy-loaded
+    // when a user runs an accessibility check. Initial bundles stay well under this limit.
+    chunkSizeWarningLimit: 700,
     rolldownOptions: {
       output: {
         // Long-lived vendor chunks: app deploys don't invalidate cached framework code.
@@ -37,6 +40,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // The on-disk transform cache keys on a file's own content, so `import.meta.glob`
+    // results (component-lab/source.ts) go stale when component files are added.
+    fsModuleCache: false,
     include: ['src/**/*.test.{ts,tsx}', 'shared/**/*.test.ts'],
   },
 });

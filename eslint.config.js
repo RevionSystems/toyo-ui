@@ -21,7 +21,7 @@ export default tseslint.config(
   },
   {
     // Route tables and test helpers are not hot-reloaded component modules.
-    files: ['src/app/routes.tsx', 'src/test/**', '**/*.test.{ts,tsx}'],
+    files: ['src/app/routes.tsx', 'src/test/**', '**/*.test.{ts,tsx}', 'src/features/component-lab/entries/**'],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   {
