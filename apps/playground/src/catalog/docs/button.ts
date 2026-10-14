@@ -47,7 +47,12 @@ export const buttonDoc: ComponentDoc = {
       description: 'Icon before the label. Decorative; the label provides the name.',
     },
     { name: 'endIcon', type: 'ReactNode', description: 'Icon after the label, e.g. a forward arrow.' },
-    { name: 'href', type: 'string', description: 'Renders a link styled as a button; routes client-side.' },
+    {
+      name: 'href',
+      type: 'string',
+      description:
+        "Renders a link styled as a button, using the theme's `linkComponent` (e.g. a router link) when one is configured.",
+    },
     {
       name: 'onClick',
       type: '(event: React.MouseEvent<HTMLButtonElement>) => void',

@@ -21,7 +21,8 @@
     "test:e2e": "playwright test",
     "check": "pnpm build:packages && pnpm -r run typecheck && pnpm lint && pnpm format:check && vitest run && pnpm verify:consumer && pnpm build:apps",
     "build:apps": "pnpm test:report && pnpm --filter \"./apps/*\" run build",
-    "verify:consumer": "pnpm --filter @toyo-ui/consumer-demo run verify:exports"
+    "verify:consumer": "pnpm --filter @toyo-ui/consumer-demo run verify:exports",
+    "docs:components": "node apps/playground/scripts/generate-component-docs.mjs && prettier --write docs/components.md --log-level warn"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

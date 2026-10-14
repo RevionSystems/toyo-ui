@@ -10,6 +10,7 @@ import { CATALOG, CATEGORIES, componentsInCategory, importLine } from '@/catalog
 
 const REPO_DOCS = [
   { file: 'README.md', about: 'Setup, commands, workspace structure, adding and consuming components.' },
+  { file: 'docs/components.md', about: 'Generated component reference: props, usage, accessibility, test coverage.' },
   { file: 'docs/architecture.md', about: 'Package boundaries, dependency direction, public exports, build strategy.' },
   { file: 'docs/component-guidelines.md', about: 'API conventions and the checklist for adding a component.' },
   { file: 'docs/accessibility.md', about: 'What is built in, how it is verified, known gaps.' },

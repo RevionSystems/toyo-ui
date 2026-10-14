@@ -6,4 +6,6 @@ test-results
 **/src/generated
 pnpm-lock.yaml
 **/public
+
 *.md
+!docs/components.md

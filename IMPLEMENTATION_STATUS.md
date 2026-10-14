@@ -33,7 +33,7 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
 | B | pnpm workspace: `packages/theme`, `packages/react`, `apps/playground`; builds, exports, shared TS config | Done |
 | C | Component Lab refinements: status indicators, Preview / Usage / API structure, import examples | Done |
 | D | `apps/consumer-demo`: independent app using only public exports | Done |
-| E | CI workflow, docs (README, architecture, guidelines, accessibility, testing, demo script, ADR), final verification | Pending |
+| E | CI workflow, docs (README, architecture, guidelines, accessibility, testing, demo script, ADR), final verification | Done |
 
 ## Progress log
 
@@ -99,8 +99,56 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
   timeout was seen once during back-to-back kill/restart runs and could not be reproduced.
   `pnpm check` ✓ (222 tests in 22 files, both packages, consumer resolution check, both apps); 49 browser tests ✓.
 
+- **Slice E — CI, documentation, verification.** `.github/workflows/ci.yml`: frozen install → `pnpm check` →
+  regenerate the component reference and fail on drift → Playwright (bundled Chromium, production builds) →
+  upload the report on failure. Playwright uses the installed Chrome locally and bundled Chromium in CI; CI serves
+  the builds `pnpm check` made. New `pnpm docs:components` generates `docs/components.md` from the catalog and lab
+  registry (prose HTML-escaped outside code spans). Docs written against the implementation: README,
+  `docs/architecture.md`, `component-guidelines.md`, `accessibility.md`, `testing-strategy.md`, `demo-script.md`,
+  `adr/0001-mui-foundation-focused-api.md`. Fixed a stale Button `href` doc ("routes client-side" — true only when
+  the app passes a `linkComponent`).
+
+## Final verification (2026-10-14)
+
+Run in a fresh copy of the working tree (no `node_modules`, `dist` or generated files), replaying the CI workflow:
+
+| Step | Result |
+|---|---|
+| `pnpm install --frozen-lockfile` | ✓ |
+| `pnpm check` — build packages, typecheck 4 projects, lint, format, 222 Vitest tests (22 files), consumer resolution check, test report, both app builds | ✓ exit 0 |
+| `pnpm docs:components` output vs. committed `docs/components.md` | ✓ byte-identical |
+| `CI=1 pnpm test:e2e` — bundled Chromium, production builds | ✓ 49 / 49 |
+| AI audit of code, config, docs and lockfile | ✓ only "no AI" statements and the regression tests |
+
+Not executed: the GitHub Actions workflow itself (nothing has been pushed). Its steps were replayed locally as above.
+
+## Definition of done
+
+| Requirement | Status |
+|---|---|
+| All AI functionality and infrastructure removed | ✓ (slice A; regression tests) |
+| Component Lab works without AI services or credentials | ✓ |
+| `@toyo-ui/react` builds (ESM + `.d.ts`, externals, peers) | ✓ |
+| `@toyo-ui/theme` exposes tokens and theme configuration | ✓ |
+| Core components typed, accessible, documented and tested | ✓ 6 stable + 2 beta |
+| Consumer demo uses only public exports | ✓ resolution, lint and runtime checks |
+| Workspace scripts and dependencies configured | ✓ clean frozen install + `pnpm check` |
+| Documentation matches the implementation | ✓ reference generated; hand-written docs checked against code |
+| Build and test results reported accurately | ✓ table above |
+
+## Recommended next improvements
+
+1. **Publishable declarations and versioning** — emit `.js` extensions in `.d.ts` (or bundle declarations) for
+   `NodeNext` consumers; add Changesets and publish to a private registry.
+2. **Manual accessibility passes** — VoiceOver/NVDA on the lab and consumer, 200% zoom, forced-colors mode;
+   add Firefox and WebKit to Playwright.
+3. **Visual regression and DataTable scale** — screenshot diffs in CI for the lab gallery; pagination and
+   virtualization for DataTable.
+
 ## Known issues
 
-- README and `docs/` are interim until slice E.
-- Declarations use extensionless relative imports (fine for bundler resolution, which the apps use; strict
+- Type declarations use extensionless relative imports (fine for bundler resolution, which the apps use; strict
   `NodeNext` consumers would need `.js` extensions).
+- One Playwright web-server startup timeout was observed during back-to-back kill/restart runs in slice D and
+  could not be reproduced afterwards.
+- Accessibility has been verified with automated tools only (see `docs/accessibility.md` → Not yet verified).
