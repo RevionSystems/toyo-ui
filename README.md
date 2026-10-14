@@ -156,4 +156,4 @@ engine behind `jest-axe`.
 [Component reference](docs/components.md) · [Accessibility](docs/accessibility.md) ·
 [Testing strategy](docs/testing-strategy.md) · [Demo script](docs/demo-script.md) ·
 [ADR 0001: MUI foundation](docs/adr/0001-mui-foundation-focused-api.md) ·
-[Implementation status](IMPLEMENTATION_STATUS.md)
+[Implementation status](IMPLEMENTATION_STATUS.md) .
