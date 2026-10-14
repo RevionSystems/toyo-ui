@@ -19,3 +19,6 @@ if (!window.matchMedia) {
     }) as MediaQueryList;
 }
 window.scrollTo = () => {};
+
+// axe-core probes <canvas>, which jsdom does not implement; return null instead of logging noise.
+HTMLCanvasElement.prototype.getContext = (() => null) as typeof HTMLCanvasElement.prototype.getContext;

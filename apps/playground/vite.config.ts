@@ -13,6 +13,10 @@ export default defineConfig({
     dedupe: ['react', 'react-dom', '@mui/material', '@emotion/react', '@emotion/styled'],
   },
   ssr: sourceSsrResolve,
+  // Scan every source file (lazy routes included) at startup. Otherwise Vite discovers some
+  // dependencies only when a lazy page first loads, re-optimizes, and reloads open pages —
+  // which stalled parallel browser tests on a cold cache.
+  optimizeDeps: { entries: ['index.html', 'src/**/*.tsx'] },
   build: {
     // axe-core (~660 kB) is the only chunk above Vite's 500 kB default, and it is lazy-loaded
     // when a user runs an accessibility check. Initial bundles stay well under this limit.

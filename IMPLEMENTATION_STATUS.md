@@ -32,7 +32,7 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
 | A | Audit and remove all AI functionality | Done |
 | B | pnpm workspace: `packages/theme`, `packages/react`, `apps/playground`; builds, exports, shared TS config | Done |
 | C | Component Lab refinements: status indicators, Preview / Usage / API structure, import examples | Done |
-| D | `apps/consumer-demo`: independent app using only public exports | Pending |
+| D | `apps/consumer-demo`: independent app using only public exports | Done |
 | E | CI workflow, docs (README, architecture, guidelines, accessibility, testing, demo script, ADR), final verification | Pending |
 
 ## Progress log
@@ -75,6 +75,29 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
   preview-container context so an open dialog follows the preview's light/dark scheme — verified in Chrome.
   Search destinations de-duplicated; promo card now hides below 1100px viewport height (the longer nav).
   `pnpm check` ✓ (215 tests); 46 browser tests ✓.
+
+- **Slice D — Consumer demo.** `apps/consumer-demo`: a *Release Console* for a platform team — release table with
+  StatusBadges and sorting, search + environment filter, empty state with "Clear filters", destructive rollback
+  Dialog with async confirm, new-release form (TextFields with validation inside a Dialog), success / error
+  Alerts, outage simulation with Retry, light/dark toggle, responsive layout. Fake async API (`releases.ts`).
+  **Independence is enforced three ways:** (1) Vite and TypeScript resolve `@toyo-ui/*` *without* the source
+  condition, i.e. from `dist/` and its `.d.ts` (the theme's MUI augmentation, e.g. `Typography variant="code"`,
+  type-checks from the built declarations); (2) ESLint `no-restricted-imports` rejects `@toyo-ui/*/*`,
+  `packages/` and `playground/` paths (verified with a probe file — the first version missed relative
+  `../../playground` paths and was fixed); (3) `pnpm verify:consumer` resolves the packages from the app folder
+  and fails unless they land in `packages/*/dist` and internals are blocked. The production bundle contains no
+  playground code. Bundle split: the Toyo-ui code in the app is **14.6 kB (5.5 kB gzip)**; React and MUI are the
+  rest. Root `test`/`typecheck` now build packages first; `check` adds `verify:consumer` and builds both apps.
+  Tests: 7 consumer behavior tests (load, filter/empty/clear, rollback, rollback failure keeps dialog open,
+  outage → retry, form validation + create, axe) and 3 Playwright tests (rollback + axe light/dark, outage
+  recovery, phone overflow).
+  Fixed along the way: consumer initial fetch rewritten as an effect with cancellation (lint caught setState in
+  an effect); a consumer form test was flaky under full parallel load — post-click assertions now await the
+  async confirm instead of asserting synchronously (5/5 full runs green); jsdom canvas warnings from axe
+  silenced in all test setups; Playwright stalled on a cold Vite cache because lazy routes triggered dependency
+  re-optimization — fixed with `optimizeDeps.entries` (two cold runs green). One Playwright web-server startup
+  timeout was seen once during back-to-back kill/restart runs and could not be reproduced.
+  `pnpm check` ✓ (222 tests in 22 files, both packages, consumer resolution check, both apps); 49 browser tests ✓.
 
 ## Known issues
 

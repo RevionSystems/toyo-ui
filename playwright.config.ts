@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 5288;
+const CONSUMER_PORT = 5289;
+export const CONSUMER_URL = `http://127.0.0.1:${CONSUMER_PORT}`;
 
 export default defineConfig({
   testDir: 'e2e',
@@ -22,13 +24,22 @@ export default defineConfig({
     },
     { name: 'mobile', use: { ...devices['Pixel 7'], channel: 'chrome' }, testMatch: /responsive\.spec\.ts/ },
   ],
-  webServer: {
-    // CI tests the production build; locally the dev server gives faster feedback.
-    command: process.env.CI
-      ? `pnpm build && pnpm --filter @toyo-ui/playground exec vite preview --port ${PORT} --strictPort --host 127.0.0.1`
-      : `pnpm --filter @toyo-ui/playground exec vite --port ${PORT} --strictPort --host 127.0.0.1`,
-    url: `http://127.0.0.1:${PORT}`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      // CI tests the production build; locally the dev server gives faster feedback.
+      command: process.env.CI
+        ? `pnpm build && pnpm --filter @toyo-ui/playground exec vite preview --port ${PORT} --strictPort --host 127.0.0.1`
+        : `pnpm --filter @toyo-ui/playground exec vite --port ${PORT} --strictPort --host 127.0.0.1`,
+      url: `http://127.0.0.1:${PORT}`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      // The consumer resolves the packages' built dist/, so build them first.
+      command: `pnpm build:packages && pnpm --filter @toyo-ui/consumer-demo exec vite --port ${CONSUMER_PORT} --strictPort --host 127.0.0.1`,
+      url: CONSUMER_URL,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
 });

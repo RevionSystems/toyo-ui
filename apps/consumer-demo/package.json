@@ -1,0 +1,30 @@
+{
+  "name": "@toyo-ui/consumer-demo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Independent app that consumes @toyo-ui/react and @toyo-ui/theme through their public exports.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "verify:exports": "node scripts/verify-package-resolution.mjs"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fontsource/inter": "^5.3.0",
+    "@mui/icons-material": "^9.5.0",
+    "@mui/material": "^9.5.0",
+    "@mui/utils": "^9.5.0",
+    "@toyo-ui/react": "workspace:*",
+    "@toyo-ui/theme": "workspace:*",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0"
+  }
+}

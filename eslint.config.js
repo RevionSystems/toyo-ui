@@ -30,6 +30,27 @@ export default tseslint.config(
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   {
+    // The consumer demo proves the library works from its public exports alone.
+    files: ['apps/consumer-demo/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@toyo-ui/*/*'],
+              message: 'Import from the package entry point (e.g. @toyo-ui/react), not internals.',
+            },
+            {
+              group: ['**/packages/**', '**/playground/**'],
+              message: 'The consumer demo must not reach into workspace sources.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['e2e/**/*.ts', '**/*.config.ts', 'vite.shared.ts', '**/scripts/**'],
     languageOptions: { globals: globals.node },
   },
