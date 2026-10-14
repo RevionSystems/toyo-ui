@@ -6,7 +6,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'playwright-report', 'test-results'] },
+  { ignores: ['**/dist', '**/coverage', 'playwright-report', 'test-results', '.test-report', '**/src/generated'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended, jsxA11y.flatConfigs.recommended],
@@ -21,11 +21,16 @@ export default tseslint.config(
   },
   {
     // Route tables and test helpers are not hot-reloaded component modules.
-    files: ['src/app/routes.tsx', 'src/test/**', '**/*.test.{ts,tsx}', 'src/features/component-lab/entries/**'],
+    files: [
+      'apps/playground/src/app/routes.tsx',
+      '**/src/test/**',
+      '**/*.test.{ts,tsx}',
+      'apps/playground/src/features/component-lab/entries/**',
+    ],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   {
-    files: ['e2e/**/*.ts', 'playwright.config.ts', 'vite.config.ts'],
+    files: ['e2e/**/*.ts', '**/*.config.ts', 'vite.shared.ts', '**/scripts/**'],
     languageOptions: { globals: globals.node },
   },
 );

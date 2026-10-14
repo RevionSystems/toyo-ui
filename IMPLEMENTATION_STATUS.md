@@ -20,8 +20,9 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
 |---|---|
 | **Vitest, not Jest** | The brief asks for Jest "where compatible with the existing setup". Vitest uses Jest's `describe`/`it`/`expect` API and already runs Testing Library, user-event and axe checks (axe-core directly, the engine behind `jest-axe`). Switching would add a Babel/ts-jest ESM toolchain without changing what is verified. |
 | **pnpm workspaces** | Required by the brief; `workspace:*` links packages without publishing. |
-| **Apps consume built packages** | Both apps import `@toyo-ui/*` through `package.json` `exports` pointing at `dist/`, so the consumer demo proves the published shape works. |
-| **Theme package owns MUI augmentation** | `@toyo-ui/react` depends on `@toyo-ui/theme` (one direction only) for tokens and palette types. |
+| **Source condition for the lab, `dist/` for consumers** | Package `exports` add a custom `@toyo-ui/source` condition → `src/index.ts`. The playground and tests opt in (instant HMR, no build step); the consumer demo does not, so it resolves `dist/` exactly like an external consumer. Deep imports are blocked by the `exports` map. |
+| **Vite library mode + `tsc` declarations** | Vite is already the build tool; library mode emits one ESM file per module (`preserveModules`) with React, MUI, Emotion and `@toyo-ui/*` external. `tsc --emitDeclarationOnly` writes `.d.ts`. No extra bundler. |
+| **Theme package owns MUI augmentation** | `@toyo-ui/react` declares `@toyo-ui/theme` as a peer (one direction only): components use its palette roles (`primaryText`, `tonal.*`). The augmentation ships in `theme.d.ts`. |
 | **Router-agnostic packages** | The theme accepts an optional link component; the playground injects React Router's. Packages never import a router. |
 
 ## Slices
@@ -29,7 +30,7 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
 | # | Slice | Status |
 |---|---|---|
 | A | Audit and remove all AI functionality | Done |
-| B | pnpm workspace: `packages/theme`, `packages/react`, `apps/playground`; builds, exports, shared TS config | Pending |
+| B | pnpm workspace: `packages/theme`, `packages/react`, `apps/playground`; builds, exports, shared TS config | Done |
 | C | Component Lab refinements: status indicators, Preview / Usage / API structure, import examples | Pending |
 | D | `apps/consumer-demo`: independent app using only public exports | Pending |
 | E | CI workflow, docs (README, architecture, guidelines, accessibility, testing, demo script, ADR), final verification | Pending |
@@ -47,8 +48,26 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
   Regression tests: `/engineering/assistant` is a 404; primary nav contains no AI entry; search opens a
   component with Enter. Results: typecheck ✓, lint ✓, 205 unit tests ✓, 46 browser tests ✓.
 
+- **Slice B — pnpm workspace.** `pnpm-workspace.yaml` (`packages/*`, `apps/*`), `tsconfig.base.json`, root
+  `vitest.config.ts` running all projects, shared `vite.shared.ts` (source condition). `npm` lockfile replaced
+  by `pnpm-lock.yaml`.
+  **`@toyo-ui/theme`**: tokens (+ breakpoints, border), contrast utilities, `createToyoTheme` (now router-agnostic
+  via `linkComponent`), default `theme`, new `ToyoThemeProvider`; tests for tokens, theme factory, link
+  injection, provider, public API.
+  **`@toyo-ui/react`**: the 8 components and their tests, package-local test helpers (no router), relative imports
+  only; public API test. Peer deps: React, MUI (material, icons, utils), Emotion, `@toyo-ui/theme`.
+  **`apps/playground`**: the lab, importing only `@toyo-ui/react` / `@toyo-ui/theme`; injects React Router into the
+  theme; catalog moved to `src/catalog`; API tab reads `packages/react/src` for display; test report covers all
+  projects. Playground-only layout tokens moved to `src/app/layout.ts`.
+  Verified build output: per-module ESM + `.d.ts`, all runtime deps external, theme augmentation present, no
+  `@/` alias leaks. Clean checkout: `pnpm install --frozen-lockfile && pnpm check` ✓ (typecheck, lint, format,
+  213 tests in 21 files, package builds, test report, playground build); 46 browser tests ✓.
+  The exports map caught one deep import (`@toyo-ui/react/EmptyState`) in the playground.
+
 ## Known issues
 
 - Dialog's loading confirm button uses MUI's grey disabled style instead of the danger tone.
 - Preview dark mode does not reach portalled UI (an open Dialog renders in the page scheme).
 - README and `docs/` are interim until slice E.
+- Declarations use extensionless relative imports (fine for bundler resolution, which the apps use; strict
+  `NodeNext` consumers would need `.js` extensions).
