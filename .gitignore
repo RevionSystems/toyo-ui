@@ -6,3 +6,5 @@ coverage
 .env.local
 playwright-report
 test-results
+.test-report
+src/generated

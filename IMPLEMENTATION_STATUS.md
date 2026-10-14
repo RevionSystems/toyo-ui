@@ -50,7 +50,7 @@ assistant to compose a confirmation dialog → receive a structured, validated s
 | 1 | Foundation: remove portal, restructure, new tokens/palette, shell + nav, Prettier | 45 min | Done |
 | 2 | Component Lab workspace: preview (viewport sizes), properties, code/API/a11y/tests tabs | 75 min | Done |
 | 3 | Component library: Button, TextField, Alert, StatusBadge, Dialog, DataTable, EmptyState, LoadingState | 100 min | Done |
-| 4 | Foundations, documentation, tests: token explorer, theme, API/Test explorers, component tests | 75 min | Pending |
+| 4 | Foundations, documentation, tests: token explorer, theme, API/Test explorers, component tests | 75 min | Done |
 | 5 | AI integration: Express + Zod + Claude, demo mode, compose/tests/review workflows | 75 min | Pending |
 | 6 | Quality: browser tests, CI, docs + ADR, final verification | 90 min | Pending |
 
@@ -106,6 +106,22 @@ assistant to compose a confirmation dialog → receive a structured, validated s
   Bugs found: `Alert announce={false}` still announced (MUI falls back to role="alert" when `role` is
   undefined); Vitest's on-disk module cache served stale `import.meta.glob` results (disabled
   `fsModuleCache`); DataTable caption rendered below the table.
+- **Slice 4** — Theme refactored into `createToyoTheme(options)` (app theme = default call with CSS
+  variables; `cssVariables: false` builds plain, subtree-scoped themes). Pages:
+  **Overview** (stats, components by category with live test status, quick start);
+  **Colors & Tokens** (token → theme → CSS variable → component flow, roles with palette path and CSS variable
+  name, live contrast, palette); **Typography**; **Spacing** (scale, control dimensions with real Buttons,
+  radius, elevation, focus ring, motion); **Theme** (sandbox: accent, radius, density, scheme re-theme real
+  components in an isolated ThemeProvider, with contrast verdicts and the equivalent factory call — verified
+  not to touch the app theme); **Accessibility** (practices, checks, per-component requirements, known gaps);
+  **API Explorer** (all 64 documented props, searchable/filterable, built on DataTable); **Test Explorer**
+  (real Vitest results via `npm run test:report` → `scripts/normalize-test-report.mjs` → repo-relative JSON;
+  build runs it first); **Documentation** (catalog-generated component reference + repo docs index).
+  Lab **Tests** tab now shows each component's real results. 202 unit tests, 46 browser tests (axe with
+  contrast on 19 pages × 2 schemes, mobile overflow on 9 pages). Built bundle checked: no absolute paths.
+  Fixed: links in text only underlined on hover (now always underlined, theme-wide); Overview overflowed
+  149px on mobile (grid column min-width); sidebar promo hidden below 940px viewport height;
+  `testsForComponent(id, undefined)` silently used the default report (argument now required).
 
 ## Known issues
 

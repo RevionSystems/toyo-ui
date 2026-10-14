@@ -10,8 +10,8 @@ const PAGES = [
   ...['button', 'text-field', 'alert', 'status-badge', 'loading-state', 'empty-state', 'dialog', 'data-table'].map(
     (id) => `/components/${id}`,
   ),
-  '/foundations/tokens',
-  '/engineering/assistant',
+  ...['tokens', 'typography', 'spacing', 'theme', 'accessibility'].map((p) => `/foundations/${p}`),
+  ...['api', 'tests', 'docs'].map((p) => `/engineering/${p}`),
 ];
 
 for (const scheme of ['light', 'dark'] as const) {

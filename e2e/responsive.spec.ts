@@ -1,7 +1,17 @@
 import { expect, test } from './fixtures';
 
 test.describe('mobile layout', () => {
-  for (const path of ['/', '/components/button', '/foundations/tokens', '/engineering/assistant']) {
+  for (const path of [
+    '/',
+    '/components/button',
+    '/components/data-table',
+    '/foundations/tokens',
+    '/foundations/typography',
+    '/foundations/theme',
+    '/foundations/accessibility',
+    '/engineering/api',
+    '/engineering/tests',
+  ]) {
     test(`${path} has no horizontal overflow`, async ({ page }) => {
       await page.goto(path);
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();

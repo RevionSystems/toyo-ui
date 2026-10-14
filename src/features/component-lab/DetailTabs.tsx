@@ -1,6 +1,7 @@
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import Box from '@mui/material/Box';
+import { visuallyHidden } from '@mui/utils';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Skeleton from '@mui/material/Skeleton';
@@ -17,6 +18,8 @@ import { CodeBlock } from '@/components/common/CodeBlock';
 import { CATALOG, type ComponentId } from '@shared/catalog';
 import { AxeCheck } from './AxeCheck';
 import { loadPublicTypes } from './source';
+import { TestResultsList } from '@/features/documentation/TestResultsList';
+import { REPORT_COMMAND, testReport, testsForComponent } from '@/features/documentation/testReport';
 
 const DETAIL_TABS = ['Code', 'API', 'Accessibility', 'Tests', 'Guidelines'] as const;
 type DetailTab = (typeof DETAIL_TABS)[number];
@@ -55,14 +58,7 @@ export function DetailTabs({ id, code, previewRef }: DetailTabsProps) {
         </Box>
       </Box>
     ),
-    Tests: (
-      <Box>
-        <Typography variant="h4" component="h3" sx={{ mb: 2 }}>
-          Testing expectations
-        </Typography>
-        <BulletList items={doc.testing ?? []} />
-      </Box>
-    ),
+    Tests: <TestsPanel id={id} />,
     Guidelines: (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {doc.purpose && <Typography sx={{ maxWidth: 760 }}>{doc.purpose}</Typography>}
@@ -120,6 +116,50 @@ export function DetailTabs({ id, code, previewRef }: DetailTabsProps) {
   );
 }
 
+function TestsPanel({ id }: { id: ComponentId }) {
+  const doc = CATALOG[id];
+  const groups = testsForComponent(id, testReport);
+  const all = groups.flatMap((g) => g.tests);
+  const passed = all.filter((t) => t.status === 'passed').length;
+  return (
+    <Box sx={{ display: 'grid', gap: 5, gridTemplateColumns: { xs: '1fr', lg: '1fr 1.4fr' } }}>
+      <Box>
+        <Typography variant="h4" component="h3" sx={{ mb: 2 }}>
+          Testing expectations
+        </Typography>
+        <BulletList items={doc.testing} />
+      </Box>
+      <Box>
+        <Typography variant="h4" component="h3" sx={{ mb: 1 }}>
+          Latest results
+        </Typography>
+        {!testReport ? (
+          <Typography variant="body2" color="text.secondary">
+            No test report yet. Run <code>{REPORT_COMMAND}</code> (it also runs on every build).
+          </Typography>
+        ) : (
+          <>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {passed} of {all.length} passing · generated {new Date(testReport.generatedAt).toLocaleString()}
+            </Typography>
+            {groups.map((g) => (
+              <Box key={g.file} sx={{ mb: 3 }}>
+                <Typography
+                  component="h4"
+                  sx={{ fontFamily: 'monospace', fontSize: 12, color: 'text.secondary', mb: 0.5 }}
+                >
+                  {g.file}
+                </Typography>
+                <TestResultsList tests={g.tests} omitAncestors={1} />
+              </Box>
+            ))}
+          </>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
 function ApiPanel({ id }: { id: ComponentId }) {
   const doc = CATALOG[id];
   const [types, setTypes] = useState<string | null>();
@@ -172,16 +212,7 @@ function ApiPanel({ id }: { id: ComponentId }) {
                       {p.required && (
                         <Box component="span" sx={{ color: 'primaryText' }}>
                           *
-                          <Box
-                            component="span"
-                            sx={{
-                              position: 'absolute',
-                              width: 1,
-                              height: 1,
-                              overflow: 'hidden',
-                              clip: 'rect(0 0 0 0)',
-                            }}
-                          >
+                          <Box component="span" sx={visuallyHidden}>
                             {' '}
                             (required)
                           </Box>
