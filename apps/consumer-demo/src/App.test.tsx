@@ -10,7 +10,9 @@ import { createReleaseApi } from './releases';
 function setup() {
   let outage = false;
   const api = createReleaseApi({ latencyMs: 0, failing: () => outage });
-  const user = userEvent.setup();
+  // `delay: null` skips the timer hop user-event takes between keystrokes by default; on slow CI runners
+  // those hops made the form test take several seconds.
+  const user = userEvent.setup({ delay: null });
   render(
     <ToyoThemeProvider>
       <App api={api} outage={{ get: () => outage, set: (on) => (outage = on) }} />
@@ -86,36 +88,45 @@ describe('Release Console (consumer of @toyo-ui/react via dist)', () => {
     expect(await screen.findByText('6 of 6 releases')).toBeInTheDocument();
   });
 
-  // The longest flow in the suite; allow for CPU contention when all projects run in parallel.
-  it('validates the new-release form and schedules a release', { timeout: 20_000 }, async () => {
+  it('validates the new-release form before submitting', async () => {
     const { user } = setup();
     await screen.findByText('6 of 6 releases');
     await user.click(screen.getByRole('button', { name: 'New release' }));
     const dialog = screen.getByRole('dialog', { name: 'Schedule a release' });
 
+    // Confirm runs an async handler, so its outcome is awaited rather than asserted synchronously.
     await user.click(within(dialog).getByRole('button', { name: 'Schedule release' }));
-    expect(within(dialog).getByRole('textbox', { name: /Service/ })).toHaveAccessibleDescription(
-      'Service name is required.',
+    await waitFor(() =>
+      expect(within(dialog).getByRole('textbox', { name: /Service/ })).toHaveAccessibleDescription(
+        'Service name is required.',
+      ),
     );
     expect(within(dialog).getByRole('textbox', { name: /Version/ })).toHaveAttribute('aria-invalid', 'true');
 
-    await user.type(within(dialog).getByRole('textbox', { name: /Service/ }), 'billing-api');
     await user.type(within(dialog).getByRole('textbox', { name: /Version/ }), '1.0');
-    await user.type(within(dialog).getByRole('textbox', { name: /Owning team/ }), 'Payments');
-    await user.click(within(dialog).getByRole('button', { name: 'Schedule release' }));
-    expect(within(dialog).getByRole('textbox', { name: /Version/ })).toHaveAccessibleDescription(
-      'Use semantic versioning, e.g. 2.4.0.',
-    );
-
-    await user.clear(within(dialog).getByRole('textbox', { name: /Version/ }));
-    await user.type(within(dialog).getByRole('textbox', { name: /Version/ }), '1.0.0');
-    await user.click(within(dialog).getByRole('button', { name: 'Production' }));
     await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Schedule release' })).toBeEnabled());
     await user.click(within(dialog).getByRole('button', { name: 'Schedule release' }));
+    await waitFor(() =>
+      expect(within(dialog).getByRole('textbox', { name: /Version/ })).toHaveAccessibleDescription(
+        'Use semantic versioning, e.g. 2.4.0.',
+      ),
+    );
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
 
-    expect(
-      await screen.findByText('billing-api 1.0.0 is scheduled for production.', undefined, { timeout: 5000 }),
-    ).toBeInTheDocument();
+  it('schedules a valid release and announces it', async () => {
+    const { user } = setup();
+    await screen.findByText('6 of 6 releases');
+    await user.click(screen.getByRole('button', { name: 'New release' }));
+    const dialog = screen.getByRole('dialog', { name: 'Schedule a release' });
+
+    await user.type(within(dialog).getByRole('textbox', { name: /Service/ }), 'billing-api');
+    await user.type(within(dialog).getByRole('textbox', { name: /Version/ }), '1.0.0');
+    await user.type(within(dialog).getByRole('textbox', { name: /Owning team/ }), 'Payments');
+    await user.click(within(dialog).getByRole('button', { name: 'Production' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Schedule release' }));
+
+    expect(await screen.findByText('billing-api 1.0.0 is scheduled for production.')).toBeInTheDocument();
     expect(screen.getByText('7 of 7 releases')).toBeInTheDocument();
   });
 

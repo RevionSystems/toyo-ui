@@ -108,6 +108,18 @@ Foundations pages, API and Test Explorers, Playwright + axe browser tests.
   `adr/0001-mui-foundation-focused-api.md`. Fixed a stale Button `href` doc ("routes client-side" — true only when
   the app passes a `linkComponent`).
 
+- **Post-release fixes.** First GitHub Actions run (`38616008949`) failed in *Quality checks*: the consumer form
+  test timed out on the 2-core runner. The failure dump showed the release *had* been created — the test was
+  slow, not wrong. Root cause: user-event's default per-keystroke timer hop (~40 keystrokes under CPU contention).
+  Consumer tests now use `userEvent.setup({ delay: null })` and the flow is split into a validation test and a
+  creation test (6.9 s on CI → ~0.2 s locally). Workflow actions bumped to current majors (checkout v7,
+  setup-node v7, upload-artifact v7, pnpm/action-setup v6) after GitHub's Node 20 deprecation warning.
+- **Sidebar cleanup.** Text-only navigation in labelled sections (Overview, Components, Foundations, Engineering)
+  with a single alignment line; removed the repeated category icons, the single-item "Library" heading, boxed
+  Beta chips (now muted text) and the decorative car card (and its image and the `Wordmark inverse` prop it
+  needed). Active item: `aria-current`, neutral background, red text, 2px edge bar. The full menu fits without
+  scrolling at 900px height.
+
 ## Final verification (2026-10-14)
 
 Run in a fresh copy of the working tree (no `node_modules`, `dist` or generated files), replaying the CI workflow:
@@ -115,12 +127,12 @@ Run in a fresh copy of the working tree (no `node_modules`, `dist` or generated 
 | Step | Result |
 |---|---|
 | `pnpm install --frozen-lockfile` | ✓ |
-| `pnpm check` — build packages, typecheck 4 projects, lint, format, 222 Vitest tests (22 files), consumer resolution check, test report, both app builds | ✓ exit 0 |
+| `pnpm check` — build packages, typecheck 4 projects, lint, format, Vitest (now 223 tests in 22 files), consumer resolution check, test report, both app builds | ✓ exit 0 |
 | `pnpm docs:components` output vs. committed `docs/components.md` | ✓ byte-identical |
 | `CI=1 pnpm test:e2e` — bundled Chromium, production builds | ✓ 49 / 49 |
 | AI audit of code, config, docs and lockfile | ✓ only "no AI" statements and the regression tests |
 
-Not executed: the GitHub Actions workflow itself (nothing has been pushed). Its steps were replayed locally as above.
+The first GitHub Actions run failed on a slow consumer test (fixed above); the fix has not yet run on GitHub.
 
 ## Definition of done
 

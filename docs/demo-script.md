@@ -67,7 +67,7 @@ Switch to the Release Console.
 
 Show `.github/workflows/ci.yml` and run `pnpm check` if time allows.
 
-> "222 unit tests, 49 browser tests including axe with real contrast in both schemes. CI also regenerates the
+> "223 unit tests, 49 browser tests including axe with real contrast in both schemes. CI also regenerates the
 > component reference and fails if it drifted."
 
 Mention bugs the checks caught: status-text contrast at 4.39:1; `Alert announce={false}` still announcing; a

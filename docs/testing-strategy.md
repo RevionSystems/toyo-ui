@@ -11,11 +11,11 @@ and in build-time checks.
 | Tokens and theme | `packages/theme/src/*.test.ts(x)` | 73 | Contrast for every text and focus pair in both schemes; theme factory options; link injection; provider; exact public exports |
 | Components | `packages/react/src/*.test.tsx` | 62 | Rendering and defaults, variants, controlled input, disabled and loading, validation messages, keyboard, dialog focus and dismissal, dismissible alerts, table sorting and empty state, `aria-*` attributes, axe; exact public exports |
 | Playground | `apps/playground/src/**/*.test.ts(x)` | 80 | Property changes update preview **and** generated code; defaults omitted; real declarations in the API tab; every lab entry renders and passes axe; documented props exist on the real interfaces; catalog completeness; routes render one `h1` and pass axe; navigation, search, explorers; no AI routes or entries |
-| Consumer demo | `apps/consumer-demo/src/App.test.tsx` | 7 | The library from `dist/` in a real product flow: loading, filter and empty state, rollback confirm, failure keeps the dialog open, outage and retry, form validation and create, axe |
+| Consumer demo | `apps/consumer-demo/src/App.test.tsx` | 8 | The library from `dist/` in a real product flow: loading, filter and empty state, rollback confirm, failure keeps the dialog open, outage and retry, form validation and create, axe |
 | Browser | `e2e/*.spec.ts` | 49 | axe with real contrast on 17 lab pages × 2 schemes; theme toggle persistence; skip link; mobile drawer and overflow; consumer rollback, outage recovery, axe in both schemes, phone overflow |
 | Build-time | `pnpm verify:consumer`, `pnpm docs:components` (CI diff) | — | Consumer resolves `packages/*/dist`; internals blocked; component reference matches the source |
 
-Totals at the time of writing: **222 Vitest tests in 22 files** and **49 Playwright tests**.
+Totals at the time of writing: **223 Vitest tests in 22 files** and **49 Playwright tests**.
 
 ## Tools
 

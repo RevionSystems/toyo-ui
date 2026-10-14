@@ -133,7 +133,7 @@ Details and API conventions: [docs/component-guidelines.md](docs/component-guide
 
 ## Testing
 
-222 Vitest tests in 22 files (theme 73, react 62, playground 80, consumer demo 7) and 49 Playwright tests,
+223 Vitest tests in 22 files (theme 73, react 62, playground 80, consumer demo 8) and 49 Playwright tests,
 including axe scans with real color contrast on 17 playground pages and the consumer app in light and dark.
 See [docs/testing-strategy.md](docs/testing-strategy.md) and [docs/accessibility.md](docs/accessibility.md).
 
