@@ -75,6 +75,7 @@ pnpm dev:consumer   # builds the packages, then the Release Console
 | `pnpm dev:consumer` | Builds the packages, then runs the consumer demo against their **`dist/`**. |
 | `pnpm build:packages` | Builds `@toyo-ui/theme` and `@toyo-ui/react` (ESM + `.d.ts`). |
 | `pnpm build` | Packages, test report, then both apps. |
+| `pnpm build:playground` | Packages, test report, playground only — the Vercel build (`vercel.json`). |
 | `pnpm typecheck` | Builds packages, then `tsc --noEmit` in every project. |
 | `pnpm lint` / `pnpm format` / `pnpm format:check` | ESLint (incl. jsx-a11y) and Prettier. |
 | `pnpm test` | Builds packages, then all Vitest projects (theme, react, playground, consumer-demo). |

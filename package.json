@@ -11,6 +11,7 @@
     "dev:consumer": "pnpm build:packages && pnpm --filter @toyo-ui/consumer-demo dev",
     "build:packages": "pnpm --filter \"./packages/*\" run build",
     "build": "pnpm build:packages && pnpm build:apps",
+    "build:playground": "pnpm build:packages && pnpm test:report && pnpm --filter @toyo-ui/playground run build",
     "typecheck": "pnpm build:packages && pnpm -r run typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
